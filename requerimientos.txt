@@ -1,0 +1,14 @@
+
+# Backend y API
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+
+# Procesamiento científico
+numpy
+pandas
+
+# Sistema RAG
+chromadb
+pypdf
