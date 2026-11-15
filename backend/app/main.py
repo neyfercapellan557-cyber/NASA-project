@@ -23,7 +23,7 @@ BACKEND_DIR = Path(__file__).resolve().parents[1]
 DOCUMENTS_DIR = BACKEND_DIR / "data" / "documents"
 
 app = FastAPI(
-    title="IGNIS Scientific Intelligence",
+    title="Flame in Freefall",
     description="Scientific exploration of combustion in microgravity",
     version="1.0.0"
 )
@@ -54,10 +54,11 @@ class ChatRequest(BaseModel):
 @app.get("/")
 async def root():
     return {
-        "project": "IGNIS",
+        "project": "Flame in Freefall",
         "status": "operational",
-        "message": "IGNIS Scientific Intelligence is online"
+        "message": "Welcome to Flame in Freefall!"
     }
+
 
 
 @app.get("/health")
