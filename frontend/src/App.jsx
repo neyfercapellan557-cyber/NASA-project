@@ -1,7 +1,9 @@
 import React from 'react'
 import {
   Atom,
+  ArrowLeftRight,
   BrainCircuit,
+  Box,
   ChevronRight,
   Flame,
   FlaskConical,
@@ -23,10 +25,15 @@ import NextGenSafety from './components/NextGenSafety'
 import ResearchPage from './components/ResearchPage'
 import './App.css'
 
+const DigitalTwin = React.lazy(() => import('./components/ScientificExperiences').then((module) => ({ default: module.DigitalTwin })))
+const MicrogravityLab = React.lazy(() => import('./components/ScientificExperiences').then((module) => ({ default: module.MicrogravityLab })))
+
 const navigation = [
   { id: 'dashboard', name: 'Mission Dashboard', icon: LayoutDashboard },
+  { id: 'digital-twin', name: 'IGNIS Digital Twin', icon: Box },
   { id: 'research', name: 'Research Intelligence', icon: Microscope },
   { id: 'experiments-lab', name: 'Experiments Lab', icon: FlaskConical },
+  { id: 'microgravity-lab', name: 'Microgravity vs Earth', icon: ArrowLeftRight },
   { id: 'combustion', name: 'Combustion Explorer', icon: Flame },
   { id: 'habitat-safety', name: 'Habitat Safety', icon: ShieldCheck },
   { id: 'next-gen-safety', name: 'Next-Gen Safety', icon: Atom },
@@ -36,8 +43,10 @@ const navigation = [
 
 const sections = {
   dashboard: Dashboard,
+  'digital-twin': DigitalTwin,
   research: ResearchPage,
   'experiments-lab': ExperimentsLab,
+  'microgravity-lab': MicrogravityLab,
   combustion: CombustionExplorer,
   'habitat-safety': HabitatSafety,
   'next-gen-safety': NextGenSafety,
@@ -122,13 +131,15 @@ export default function App() {
           </div>
         </header>
 
-        <div className="route-transition" key={activeSection}>
-          <ActivePage
-            {...(activeSection === 'assistant'
-              ? { onAIActiveChange: setAssistantActive }
-              : {})}
-          />
-        </div>
+        <React.Suspense fallback={<div className="lab-simulation-loading" role="status">Loading IGNIS experience…</div>}>
+          <div className="route-transition" key={activeSection}>
+            <ActivePage
+              {...(activeSection === 'assistant'
+                ? { onAIActiveChange: setAssistantActive }
+                : {})}
+            />
+          </div>
+        </React.Suspense>
       </main>
       <IgnisCompanion
         active={activeSection === 'assistant' && assistantActive}

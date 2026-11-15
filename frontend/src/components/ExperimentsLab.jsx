@@ -15,6 +15,8 @@ import {
 
 import { getDocumentUrl } from '../api'
 
+const ExperimentSimulator3D = React.lazy(() => import('./ExperimentSimulator3D'))
+
 const nasaImageBase = 'https://images-assets.nasa.gov/image'
 const nasaVideoBase = 'https://images-assets.nasa.gov/video'
 
@@ -412,7 +414,7 @@ function SimulationControls({ visualizer, parameters, onChange }) {
   return <div className="lab-parameter-list">{visualizer.controls.map((key) => controls[key])}</div>
 }
 
-function SimulationLab() {
+function LegacySimulationLab() {
   const [activeId, setActiveId] = React.useState(visualizers[0].id)
   const [parameters, setParameters] = React.useState({
     gravity: 0.1,
@@ -484,6 +486,20 @@ function SimulationLab() {
         </div>
       </div>
     </section>
+  )
+}
+
+function SimulationLab({ onOpenExperiment }) {
+  return (
+    <>
+      <React.Suspense fallback={<div className="lab-simulation-loading" role="status">Loading the 3D simulation engine...</div>}>
+        <ExperimentSimulator3D onOpenExperiment={onOpenExperiment} />
+      </React.Suspense>
+      <details className="lab-2d-reference">
+        <summary>Open compact 2D conceptual references</summary>
+        <LegacySimulationLab />
+      </details>
+    </>
   )
 }
 
@@ -827,6 +843,12 @@ export default function ExperimentsLab() {
         </p>
       </header>
 
+      <nav className="experience-links lab-experience-links" aria-label="Connected IGNIS experiences">
+        <a href="#digital-twin"><Wind size={14} /> Explore the habitat digital twin <ArrowRight size={13} /></a>
+        <a href="#microgravity-lab"><Flame size={14} /> Compare Earth & microgravity <ArrowRight size={13} /></a>
+        <a href="#assistant"><Search size={14} /> Investigate with IGNIS AI <ArrowRight size={13} /></a>
+      </nav>
+
       {activeExperiment ? (
         <ExperimentDetail
           experiment={activeExperiment}
@@ -856,7 +878,7 @@ export default function ExperimentsLab() {
             </button>
           </div>
           {tab === 'simulations' ? (
-            <SimulationLab />
+            <SimulationLab onOpenExperiment={setActiveExperimentId} />
           ) : (
             <ExperimentArchive onOpen={setActiveExperimentId} />
           )}
@@ -864,7 +886,8 @@ export default function ExperimentsLab() {
             <Flame size={16} />
             <p>
               <strong>Scientific integrity:</strong> archive statements link to their source records.
-              Concept diagrams are not validated simulations, and no experimental measurements are generated.
+              3D scenes are conceptual or simplified mathematical models, not experimentally validated simulations;
+              model curves are not experimental measurements.
             </p>
           </div>
         </>

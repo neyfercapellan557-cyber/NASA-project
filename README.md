@@ -37,15 +37,21 @@ npm run dev -- --host 127.0.0.1 --port 5175
 
 Open `http://127.0.0.1:5175`. Set `VITE_API_BASE_URL` if the backend is hosted
 elsewhere. Set `FRONTEND_ORIGINS` to a comma-separated allowlist when using
-different frontend origins.
+different frontend origins. `CHROMA_DB_PATH` and `DOCUMENTS_DIR` can point to
+persistent data locations outside the backend source tree.
 
-For generated answers, Ollama must be running and have `llama3.2:3b` available.
-Casual and general questions use local-model general knowledge. Questions about
-combustion, microgravity, and spacecraft fire research use only relevant indexed
-excerpts as direct quotations with source markers; when the collection cannot
-support a relevant quote, IGNIS abstains instead of generating a paraphrase.
-The RAG endpoint returns evidence and source pages separately from the answer.
-Do not treat responses as operational guidance.
+By default, general conversation uses local Ollama with `llama3.2:3b`. The
+backend can instead use an OpenAI-compatible inference API by setting
+`LLM_PROVIDER=openai-compatible`, `LLM_BASE_URL`, `LLM_MODEL`, and
+`LLM_API_KEY` on the backend only. Never set `LLM_API_KEY` in a `VITE_*`
+variable or commit it to the repository. This provider is used for general
+conversation; evidence-based research answers remain extractive and use the
+local Chroma collection.
+Questions about combustion, microgravity, and spacecraft fire research use only
+relevant indexed excerpts as direct quotations with source markers; when the
+collection cannot support a relevant quote, IGNIS abstains instead of generating
+a paraphrase. The RAG endpoint returns evidence and source pages separately
+from the answer. Do not treat responses as operational guidance.
 
 ## Interactive exploration
 
@@ -74,6 +80,18 @@ rights must be checked in the original media record.
 It documents mission operations and sample dimensions, not measured fire
 outcomes; Saffire-I questions are scoped to that source and answered with
 verbatim evidence.
+
+The IGNIS Digital Twin (`#digital-twin`) is a selectable, schematic habitat with
+explicitly hypothetical telemetry scenarios; it is not a spacecraft replica,
+fire detector, or operational control. Microgravity vs Earth Lab
+(`#microgravity-lab`) compares two interactive 3D transport-context diagrams
+with shared inputs, synchronized playback/cameras, and a simplified droplet
+diameter curve. That curve uses `D²(t) = max(D₀² − Kt, 0)` with a user-selected,
+illustrative coefficient; the equation has no gravity term, so its matching
+curves must not be interpreted as measured equivalence between environments.
+The flame geometry and transport cues are conceptual, and neither experience
+claims experimental validation. Both link to the existing research library,
+Experiments Lab, and IGNIS AI assistant.
 
 ## Validation
 

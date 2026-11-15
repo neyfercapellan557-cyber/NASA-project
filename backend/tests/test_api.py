@@ -53,21 +53,21 @@ class ApiTests(unittest.TestCase):
         )
 
     @patch("app.main.get_collection", return_value=FakeCollection())
-    @patch("app.main.get_ollama_status", return_value={
+    @patch("app.main.get_model_status", return_value={
         "status": "online",
         "available": True,
         "provider": "Ollama",
         "model": "llama3.2:3b",
         "error": None,
     })
-    def test_status_uses_live_collection_counts(self, mock_ollama, mock_collection):
+    def test_status_uses_live_collection_counts(self, mock_model, mock_collection):
         response = self.client.get("/api/status")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["knowledge_base"]["documents"], 2)
         self.assertEqual(response.json()["knowledge_base"]["chunks"], 2)
         self.assertEqual(response.json()["ai"]["model"], "llama3.2:3b")
-        mock_ollama.assert_called_once()
+        mock_model.assert_called_once()
         mock_collection.assert_called_once()
 
     @patch("app.main.get_collection", return_value=FakeCollection())

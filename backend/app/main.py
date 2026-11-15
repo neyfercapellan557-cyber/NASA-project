@@ -4,7 +4,7 @@ import logging
 import os
 from pathlib import Path
 from urllib.error import URLError
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 import json
 
 from fastapi import FastAPI, HTTPException, Query
@@ -13,14 +13,23 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from app.services.crossref import CrossrefUnavailableError, search_crossref
-from app.services.llm_service import MODEL, OLLAMA_URL
+from app.services.llm_service import (
+    LLM_API_KEY,
+    LLM_BASE_URL,
+    LLM_PROVIDER,
+    MODEL,
+    OLLAMA_URL,
+)
 from app.services.rag_service import answer_question
 from app.services.vector_store import get_collection
 
 
 logger = logging.getLogger(__name__)
 BACKEND_DIR = Path(__file__).resolve().parents[1]
-DOCUMENTS_DIR = BACKEND_DIR / "data" / "documents"
+DOCUMENTS_DIR = Path(os.getenv(
+    "DOCUMENTS_DIR",
+    str(BACKEND_DIR / "data" / "documents"),
+)).expanduser()
 
 app = FastAPI(
     title="Flame in Freefall",
@@ -69,16 +78,41 @@ async def health():
     }
 
 
-def get_ollama_status() -> dict:
-    tags_url = OLLAMA_URL.rsplit("/api/generate", 1)[0] + "/api/tags"
+def get_model_status() -> dict:
+    if LLM_PROVIDER == "ollama":
+        status_url = OLLAMA_URL.rsplit("/api/generate", 1)[0] + "/api/tags"
+        headers = {}
+        provider = "Ollama"
+    elif LLM_PROVIDER == "openai-compatible":
+        if not LLM_BASE_URL or not LLM_API_KEY:
+            return {
+                "status": "configuration_missing",
+                "available": False,
+                "provider": "OpenAI-compatible",
+                "model": MODEL,
+                "error": "LLM_BASE_URL and LLM_API_KEY must be configured.",
+            }
+        status_url = f"{LLM_BASE_URL}/models"
+        headers = {"Authorization": f"Bearer {LLM_API_KEY}"}
+        provider = "OpenAI-compatible"
+    else:
+        return {
+            "status": "configuration_error",
+            "available": False,
+            "provider": LLM_PROVIDER,
+            "model": MODEL,
+            "error": f"Unsupported LLM_PROVIDER: {LLM_PROVIDER}",
+        }
+
+    request = Request(status_url, headers=headers)
     try:
-        with urlopen(tags_url, timeout=2) as response:
+        with urlopen(request, timeout=8) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except (URLError, TimeoutError, OSError) as error:
         return {
             "status": "offline",
             "available": False,
-            "provider": "Ollama",
+            "provider": provider,
             "model": MODEL,
             "error": str(error),
         }
@@ -86,23 +120,27 @@ def get_ollama_status() -> dict:
         return {
             "status": "error",
             "available": False,
-            "provider": "Ollama",
+            "provider": provider,
             "model": MODEL,
-            "error": f"Invalid Ollama response: {error}",
+            "error": f"Invalid inference provider response: {error}",
         }
 
+    model_items = payload.get(
+        "models" if LLM_PROVIDER == "ollama" else "data",
+        [],
+    )
     installed_models = {
-        model.get("name")
-        for model in payload.get("models", [])
+        model.get("name" if LLM_PROVIDER == "ollama" else "id")
+        for model in model_items
         if isinstance(model, dict)
     }
     available = MODEL in installed_models
     return {
         "status": "online" if available else "model_missing",
         "available": available,
-        "provider": "Ollama",
+        "provider": provider,
         "model": MODEL,
-        "error": None if available else f"Model {MODEL} is not installed in Ollama.",
+        "error": None if available else f"Model {MODEL} is not available.",
     }
 
 
@@ -114,7 +152,7 @@ def get_system_status():
         metadata.get("source", "Unknown")
         for metadata in metadatas
     }
-    ai_status = get_ollama_status()
+    ai_status = get_model_status()
     return {
         "status": "operational" if ai_status["available"] else "degraded",
         "backend": "online",
