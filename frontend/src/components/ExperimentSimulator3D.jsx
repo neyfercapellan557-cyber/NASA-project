@@ -20,52 +20,52 @@ const ExperimentModelChart = React.lazy(() => import('./ExperimentModelChart'))
 const simulationList = [
   {
     id: 'droplet',
-    label: 'Droplet combustion',
-    title: 'Droplet Combustion in Microgravity',
-    classification: 'SIMPLIFIED MATHEMATICAL MODEL',
-    description: 'A suspended liquid-fuel droplet inside independently selectable, animated schematic flame layers and vapor tracers.',
-    model: 'The diameter curve uses the idealized d² relation: D²(t) = max(D₀² − Kt, 0). K is a user-selected illustrative coefficient, not fitted to FLEX data.',
-    assumptions: 'Spherical droplet; constant user-specified K; no internal circulation, transient heating, soot radiation, convection, or finite chamber boundaries. Temperature and oxidizer inputs alter visual emphasis only.',
+    label: 'Combustión de gotas',
+    title: 'Combustión de gotas en microgravedad',
+    classification: 'MODELO MATEMÁTICO SIMPLIFICADO',
+    description: 'Gota de combustible líquido suspendida, rodeada por capas esquemáticas animadas de llama y trazadores de vapor que se pueden seleccionar.',
+    model: 'La curva del diámetro usa la relación idealizada d²: D²(t) = máx(D₀² − Kt, 0). K es un coeficiente ilustrativo elegido por el usuario; no se ajustó a datos de FLEX.',
+    assumptions: 'Gota esférica y K constante especificado por el usuario. No se consideran circulación interna, calentamiento transitorio, radiación del hollín, convección ni límites de una cámara finita. Las entradas de temperatura y oxidante solo modifican el énfasis visual.',
     records: ['flex', 'flex-2']
   },
   {
     id: 'solid',
-    label: 'Solid-material spread',
-    title: 'Flame Spread on Solid Materials',
-    classification: 'SIMPLIFIED MATHEMATICAL MODEL',
-    description: 'A material surface with a conceptual thermal front, displayed as a temperature-relative color field.',
-    model: 'The displayed thermal penetration length is ℓ = min(L, 2√(αt)). The heat-map colors are normalized visualization values, not calculated material temperatures or flame-spread rates.',
-    assumptions: 'One-dimensional diffusion-length scale; constant user-selected diffusivity; no chemistry, gas-phase coupling, radiative feedback, orientation, or material-specific ignition/spread model.',
+    label: 'Propagación en materiales sólidos',
+    title: 'Propagación de llama en materiales sólidos',
+    classification: 'MODELO MATEMÁTICO SIMPLIFICADO',
+    description: 'Superficie de un material con un frente térmico conceptual, representado mediante un campo de color relativo a la temperatura.',
+    model: 'La longitud de penetración térmica mostrada es ℓ = mín(L, 2√(αt)). Los colores del mapa están normalizados para visualizar; no son temperaturas calculadas del material ni velocidades de propagación de llama.',
+    assumptions: 'Escala de longitud de difusión unidimensional y difusividad constante elegida por el usuario. No se incluyen química, acoplamiento con la fase gaseosa, retroalimentación radiativa, orientación ni un modelo de ignición o propagación específico del material.',
     records: ['bass-ii', 'saffire-i']
   },
   {
     id: 'smoke',
-    label: 'Smoke and products',
-    title: 'Combustion Products and Smoke Dynamics',
-    classification: 'SIMPLIFIED MATHEMATICAL MODEL',
-    description: 'Animated tracer particles move through a conceptual chamber under an imposed ventilation vector.',
-    model: 'The chart uses the ideal well-mixed purge relation C/C₀ = exp(−Ut/L). Particles are visual tracers; they are not computed smoke, soot, or toxic-gas trajectories.',
-    assumptions: 'A single characteristic length, uniform mixing, constant ventilation, and a source switched off at t = 0. No chamber geometry, deposition, buoyancy, reaction, or species-specific transport is calculated.',
+    label: 'Humo y productos',
+    title: 'Dinámica de los productos de combustión y el humo',
+    classification: 'MODELO MATEMÁTICO SIMPLIFICADO',
+    description: 'Partículas trazadoras animadas se desplazan por una cámara conceptual bajo un vector de ventilación impuesto.',
+    model: 'La gráfica usa la relación ideal de purga con mezcla uniforme C/C₀ = exp(−Ut/L). Las partículas son trazadores visuales; no representan trayectorias calculadas de humo, hollín o gases tóxicos.',
+    assumptions: 'Se supone una sola longitud característica, mezcla uniforme, ventilación constante y una fuente apagada en t = 0. No se calculan geometría de la cámara, deposición, flotabilidad, reacción ni transporte específico de cada especie.',
     records: ['bass-ii']
   },
   {
     id: 'extinction',
-    label: 'Extinction context',
-    title: 'Flame Extinction and Combustion Limits',
-    classification: 'CONCEPTUAL VISUALIZATION',
-    description: 'Adjust environmental inputs and inspect a qualitative transition in the displayed flame envelope.',
-    model: 'The displayed visual-support index is an explicit graphic mapping of oxygen, heat-loss, and ventilation inputs. It is not a flammability model, extinction probability, or limiting oxygen concentration.',
-    assumptions: 'No fuel-specific kinetics, heat-transfer balance, chamber geometry, pressure correction, or experimentally measured extinction boundary is represented.',
+    label: 'Contexto de extinción',
+    title: 'Extinción de llama y límites de combustión',
+    classification: 'VISUALIZACIÓN CONCEPTUAL',
+    description: 'Ajusta las entradas ambientales y observa una transición cualitativa en la envolvente de llama mostrada.',
+    model: 'El índice de soporte visual mostrado es una correspondencia gráfica explícita de las entradas de oxígeno, pérdida de calor y ventilación. No es un modelo de inflamabilidad, una probabilidad de extinción ni una concentración límite de oxígeno.',
+    assumptions: 'No se representan cinética específica del combustible, balance de transferencia de calor, geometría de la cámara, corrección por presión ni límites de extinción medidos experimentalmente.',
     records: ['bass-ii', 'flex']
   },
   {
     id: 'microgravity',
-    label: 'Microgravity flame',
-    title: 'Microgravity Flame Context',
-    classification: 'CONCEPTUAL VISUALIZATION',
-    description: 'Inspect a layered spherical flame concept alongside adjustable gravity and ventilation vectors.',
-    model: 'Arrow lengths encode only the selected inputs. Flame geometry is deliberately fixed and is not a predicted flame shape.',
-    assumptions: 'No buoyant-flow field, combustion chemistry, diffusion, or flame response is calculated.',
+    label: 'Llama en microgravedad',
+    title: 'Contexto de llama en microgravedad',
+    classification: 'VISUALIZACIÓN CONCEPTUAL',
+    description: 'Examina una llama esférica conceptual en capas junto con vectores ajustables de gravedad y ventilación.',
+    model: 'La longitud de las flechas codifica únicamente las entradas seleccionadas. La geometría de la llama se mantiene fija deliberadamente; no predice su forma.',
+    assumptions: 'No se calculan campo de flujo por flotabilidad, química de combustión, difusión ni respuesta de la llama.',
     records: ['flex', 'bass-ii', 'saffire-i']
   }
 ]
@@ -101,30 +101,30 @@ const defaultParameters = {
 
 const parameterDefinitions = {
   droplet: [
-    { key: 'diameterMm', label: 'Initial droplet diameter', unit: 'mm', min: 0.5, max: 5, step: 0.1, help: 'Sets the droplet scale and D₀ in the displayed d² relation.' },
-    { key: 'evaporationK', label: 'Illustrative evaporation coefficient, K', unit: 'mm²/s', min: 0.02, max: 0.5, step: 0.01, help: 'User-selected coefficient; not an experimental FLEX measurement.' },
-    { key: 'ambientTemperatureK', label: 'Ambient gas temperature input', unit: 'K', min: 250, max: 900, step: 10, help: 'Displayed as a condition input; the model does not predict flame temperature.' },
-    { key: 'oxygenPercent', label: 'Oxygen fraction input', unit: '% vol', min: 12, max: 24, step: 0.1, help: 'Changes visual envelope emphasis only; no flammability limit is calculated.' }
+    { key: 'diameterMm', label: 'Diámetro inicial de la gota', unit: 'mm', min: 0.5, max: 5, step: 0.1, help: 'Define la escala de la gota y D₀ en la relación d² mostrada.' },
+    { key: 'evaporationK', label: 'Coeficiente ilustrativo de evaporación, K', unit: 'mm²/s', min: 0.02, max: 0.5, step: 0.01, help: 'Coeficiente elegido por el usuario; no es una medición experimental de FLEX.' },
+    { key: 'ambientTemperatureK', label: 'Entrada de temperatura del gas ambiente', unit: 'K', min: 250, max: 900, step: 10, help: 'Se muestra como condición de entrada; el modelo no predice la temperatura de la llama.' },
+    { key: 'oxygenPercent', label: 'Entrada de fracción de oxígeno', unit: '% vol', min: 12, max: 24, step: 0.1, help: 'Solo modifica el énfasis visual de la envolvente; no se calcula un límite de inflamabilidad.' }
   ],
   solid: [
-    { key: 'thicknessMm', label: 'Specimen thickness', unit: 'mm', min: 1, max: 20, step: 0.5, help: 'Sets the displayed slab thickness and caps the diffusion length.' },
-    { key: 'diffusivityMm2s', label: 'Thermal diffusivity input, α', unit: 'mm²/s', min: 0.1, max: 5, step: 0.1, help: 'Illustrative constant for the displayed diffusion-length relation.' },
-    { key: 'surfaceTemperatureK', label: 'Surface temperature input', unit: 'K', min: 300, max: 1200, step: 10, help: 'Controls heat-map color scaling only; no material temperature field is solved.' },
-    { key: 'ventilationMs', label: 'Imposed ventilation speed', unit: 'm/s', min: 0, max: 0.5, step: 0.01, help: 'Scales the displayed airflow vector; no flow field is calculated.' }
+    { key: 'thicknessMm', label: 'Grosor de la muestra', unit: 'mm', min: 1, max: 20, step: 0.5, help: 'Define el grosor de la placa mostrada y limita la longitud de difusión.' },
+    { key: 'diffusivityMm2s', label: 'Entrada de difusividad térmica, α', unit: 'mm²/s', min: 0.1, max: 5, step: 0.1, help: 'Constante ilustrativa para la relación de longitud de difusión mostrada.' },
+    { key: 'surfaceTemperatureK', label: 'Entrada de temperatura superficial', unit: 'K', min: 300, max: 1200, step: 10, help: 'Solo controla la escala de color del mapa térmico; no se resuelve el campo de temperatura del material.' },
+    { key: 'ventilationMs', label: 'Velocidad de ventilación impuesta', unit: 'm/s', min: 0, max: 0.5, step: 0.01, help: 'Escala el vector de flujo de aire mostrado; no se calcula un campo de flujo.' }
   ],
   smoke: [
-    { key: 'ventilationMs', label: 'Ventilation speed, U', unit: 'm/s', min: 0, max: 0.5, step: 0.01, help: 'Sets tracer drift and the idealized purge time constant.' },
-    { key: 'chamberLengthM', label: 'Characteristic chamber length, L', unit: 'm', min: 0.5, max: 5, step: 0.1, help: 'Used only as the characteristic length in the well-mixed purge relation.' },
-    { key: 'orientation', label: 'Ventilation orientation', min: 0, max: 1, step: 1, options: [['axial', 'Axial · horizontal'], ['transverse', 'Transverse · lateral']], help: 'Rotates the displayed ventilation vector and tracer drift.' }
+    { key: 'ventilationMs', label: 'Velocidad de ventilación, U', unit: 'm/s', min: 0, max: 0.5, step: 0.01, help: 'Define la deriva de los trazadores y la constante de tiempo idealizada de purga.' },
+    { key: 'chamberLengthM', label: 'Longitud característica de la cámara, L', unit: 'm', min: 0.5, max: 5, step: 0.1, help: 'Se usa únicamente como longitud característica en la relación de purga con mezcla uniforme.' },
+    { key: 'orientation', label: 'Orientación de la ventilación', min: 0, max: 1, step: 1, options: [['axial', 'Axial · horizontal'], ['transverse', 'Transversal · lateral']], help: 'Gira el vector de ventilación mostrado y la deriva de los trazadores.' }
   ],
   extinction: [
-    { key: 'oxygenPercent', label: 'Oxygen fraction input', unit: '% vol', min: 12, max: 24, step: 0.1, help: 'Environmental context only; not a limiting oxygen concentration.' },
-    { key: 'heatLossIndex', label: 'Illustrative heat-loss input', unit: '0–1 index', min: 0, max: 1, step: 0.01, help: 'Dimensionless visual control, not a measured heat-transfer coefficient.' },
-    { key: 'ventilationMs', label: 'Ventilation speed input', unit: 'm/s', min: 0, max: 0.5, step: 0.01, help: 'Affects the graphic index only; no extinction threshold is inferred.' }
+    { key: 'oxygenPercent', label: 'Entrada de fracción de oxígeno', unit: '% vol', min: 12, max: 24, step: 0.1, help: 'Solo es contexto ambiental; no es una concentración límite de oxígeno.' },
+    { key: 'heatLossIndex', label: 'Entrada ilustrativa de pérdida de calor', unit: 'índice 0–1', min: 0, max: 1, step: 0.01, help: 'Control visual adimensional; no es un coeficiente de transferencia de calor medido.' },
+    { key: 'ventilationMs', label: 'Entrada de velocidad de ventilación', unit: 'm/s', min: 0, max: 0.5, step: 0.01, help: 'Solo afecta el índice gráfico; no se infiere un umbral de extinción.' }
   ],
   microgravity: [
-    { key: 'gravityMs2', label: 'Gravitational acceleration input', unit: 'm/s²', min: 0, max: 9.81, step: 0.1, help: 'Sets the displayed gravity-vector length from 0 to standard Earth gravity.' },
-    { key: 'ventilationMs', label: 'Imposed ventilation speed', unit: 'm/s', min: 0, max: 0.5, step: 0.01, help: 'Sets the displayed ventilation-vector length.' }
+    { key: 'gravityMs2', label: 'Entrada de aceleración gravitatoria', unit: 'm/s²', min: 0, max: 9.81, step: 0.1, help: 'Define la longitud del vector de gravedad mostrado, desde cero hasta la gravedad terrestre estándar.' },
+    { key: 'ventilationMs', label: 'Velocidad de ventilación impuesta', unit: 'm/s', min: 0, max: 0.5, step: 0.01, help: 'Define la longitud del vector de ventilación mostrado.' }
   ]
 }
 
@@ -172,11 +172,11 @@ function getModelValue(id, parameters, timeSeconds) {
 }
 
 function getGraphLabel(id) {
-  if (id === 'droplet') return { title: 'Idealized droplet diameter', unit: 'mm' }
-  if (id === 'solid') return { title: 'Thermal penetration-length scale', unit: 'mm' }
-  if (id === 'smoke') return { title: 'Normalized residual concentration, C/C₀', unit: 'dimensionless' }
-  if (id === 'extinction') return { title: 'Visual-support index', unit: 'dimensionless' }
-  return { title: 'Normalized input-context index', unit: 'dimensionless' }
+  if (id === 'droplet') return { title: 'Diámetro idealizado de la gota', unit: 'mm' }
+  if (id === 'solid') return { title: 'Escala de longitud de penetración térmica', unit: 'mm' }
+  if (id === 'smoke') return { title: 'Concentración residual normalizada, C/C₀', unit: 'adimensional' }
+  if (id === 'extinction') return { title: 'Índice de soporte visual', unit: 'adimensional' }
+  return { title: 'Índice normalizado del contexto de entrada', unit: 'adimensional' }
 }
 
 function ParameterControl({ definition, value, onChange }) {
@@ -422,60 +422,60 @@ function FlameSurface({
 const dropletFlameLayers = [
   {
     id: 'diffusion',
-    label: 'Outer diffusion region',
-    shortLabel: 'Diffusion region',
+    label: 'Región de difusión exterior',
+    shortLabel: 'Región de difusión',
     scale: 1.5,
     coreColor: '#24596a',
     edgeColor: '#67dcea',
     opacity: 0.11,
     amplitude: 0.65,
     phase: 0.2,
-    description: 'Outer shell is a schematic diffusion region; no species concentration or flame radius is calculated.'
+    description: 'La capa exterior es una región de difusión esquemática; no se calcula la concentración de especies ni el radio de llama.'
   },
   {
     id: 'reaction',
-    label: 'Reaction envelope',
-    shortLabel: 'Reaction envelope',
+    label: 'Envolvente de reacción',
+    shortLabel: 'Envolvente de reacción',
     scale: 1.18,
     coreColor: '#f05b2c',
     edgeColor: '#ffd17c',
     opacity: 0.28,
     amplitude: 1,
     phase: 1.1,
-    description: 'Bright layer marks an illustrative reaction-zone envelope, not a computed reaction rate or measured flame front.'
+    description: 'La capa luminosa representa una envolvente ilustrativa de la zona de reacción, no una velocidad de reacción calculada ni un frente de llama medido.'
   },
   {
     id: 'fuel-vapor',
-    label: 'Fuel-vapor region',
-    shortLabel: 'Fuel vapor',
+    label: 'Región de vapor de combustible',
+    shortLabel: 'Vapor de combustible',
     scale: 0.79,
     coreColor: '#174d5f',
     edgeColor: '#63dce5',
     opacity: 0.15,
     amplitude: 0.7,
     phase: 2.2,
-    description: 'Inner region represents fuel vapor schematically; its boundary and composition are not solved.'
+    description: 'La región interior representa esquemáticamente el vapor de combustible; no se calculan sus límites ni su composición.'
   }
 ]
 
 const microgravityFlameLayers = [
   {
     ...dropletFlameLayers[0],
-    label: 'Outer diffusion region',
-    shortLabel: 'Diffusion region',
-    description: 'Outer boundary is a schematic diffusion region and does not represent a calculated transport field.'
+    label: 'Región de difusión exterior',
+    shortLabel: 'Región de difusión',
+    description: 'El límite exterior es una región de difusión esquemática; no representa un campo de transporte calculado.'
   },
   {
     ...dropletFlameLayers[1],
-    label: 'Luminous reaction envelope',
-    shortLabel: 'Reaction envelope',
-    description: 'This animated envelope is conceptual; it is not a predicted microgravity flame geometry.'
+    label: 'Envolvente luminosa de reacción',
+    shortLabel: 'Envolvente de reacción',
+    description: 'Esta envolvente animada es conceptual; no predice la geometría de una llama en microgravedad.'
   },
   {
     ...dropletFlameLayers[2],
-    label: 'Inner flame region',
-    shortLabel: 'Inner region',
-    description: 'The center is an illustrative inner region; no fuel concentration or local temperature is calculated.'
+    label: 'Región interior de la llama',
+    shortLabel: 'Región interior',
+    description: 'El centro es una región interior ilustrativa; no se calcula la concentración de combustible ni la temperatura local.'
   }
 ]
 
@@ -501,9 +501,9 @@ function LayeredFlameEnvelope({ radius, layers, onSelect, intensity = 1 }) {
 
 function LayeredFlamePlume({ position, scale, intensity = 1, onSelect }) {
   const layers = [
-    { label: 'Outer flame envelope', scale: [1.32, 1.1, 1.32], core: '#ab4928', edge: '#ff9a51', opacity: 0.17, phase: 0.5 },
-    { label: 'Luminous reaction zone', scale: [0.98, 0.92, 0.98], core: '#f36531', edge: '#ffd071', opacity: 0.31, phase: 1.6 },
-    { label: 'Inner flame structure', scale: [0.57, 0.73, 0.57], core: '#e85532', edge: '#ffbc68', opacity: 0.26, phase: 2.8 }
+    { label: 'Envolvente exterior de la llama', scale: [1.32, 1.1, 1.32], core: '#ab4928', edge: '#ff9a51', opacity: 0.17, phase: 0.5 },
+    { label: 'Zona luminosa de reacción', scale: [0.98, 0.92, 0.98], core: '#f36531', edge: '#ffd071', opacity: 0.31, phase: 1.6 },
+    { label: 'Estructura interior de la llama', scale: [0.57, 0.73, 0.57], core: '#e85532', edge: '#ffbc68', opacity: 0.26, phase: 2.8 }
   ]
 
   return (
@@ -519,7 +519,7 @@ function LayeredFlamePlume({ position, scale, intensity = 1, onSelect }) {
           amplitude={0.85 + index * 0.1}
           phase={layer.phase}
           renderOrder={index + 1}
-          onSelect={() => onSelect(layer.label, 'This animated surface is a conceptual flame layer; no validated flow, temperature field, or reaction rate is calculated.')}
+          onSelect={() => onSelect(layer.label, 'Esta superficie animada es una capa conceptual de la llama; no se calcula un flujo, campo de temperatura ni velocidad de reacción validados.')}
         />
       ))}
     </group>
@@ -622,7 +622,7 @@ function DropletScene({ parameters, elapsedSeconds, playing, onSelect }) {
           scale={dropletRadius}
           onClick={(event) => {
             event.stopPropagation()
-            onSelect('Liquid-fuel droplet', `Current idealized diameter: ${diameter.toFixed(2)} mm. The d² curve uses the selected K input; it is not fitted to a NASA experiment.`)
+            onSelect('Gota de combustible líquido', `Diámetro idealizado actual: ${diameter.toFixed(2)} mm. La curva d² usa el valor K seleccionado; no se ajustó a un experimento de NASA.`)
           }}
         >
           <sphereGeometry args={[1, 40, 28]} />
@@ -688,7 +688,7 @@ function SolidScene({ parameters, elapsedSeconds, onSelect }) {
     <Stage>
       <mesh position={[0, -0.75 - slabDepth / 2, 0]} onClick={(event) => {
         event.stopPropagation()
-        onSelect('Solid specimen', `Displayed thickness: ${parameters.thicknessMm.toFixed(1)} mm. The color field is a normalized visualization, not measured temperature.`)
+        onSelect('Muestra sólida', `Grosor mostrado: ${parameters.thicknessMm.toFixed(1)} mm. El campo de color es una visualización normalizada, no una temperatura medida.`)
       }}>
         <boxGeometry args={[4.4, slabDepth, 2.3]} />
         <meshStandardMaterial color="#1c3246" metalness={0.18} roughness={0.75} />
@@ -700,7 +700,7 @@ function SolidScene({ parameters, elapsedSeconds, onSelect }) {
         intensity={0.9}
         onSelect={(label, description) => onSelect(
           label,
-          `${description} Thermal penetration-length scale: ${penetrationMm.toFixed(2)} mm from 2√(αt), capped by the displayed specimen thickness.`
+          `${description} Escala de longitud de penetración térmica: ${penetrationMm.toFixed(2)} mm según 2√(αt), limitada por el grosor mostrado de la muestra.`
         )}
       />
       <mesh position={[-1.85, 0.48, 0]}>
@@ -755,7 +755,7 @@ function SmokeParticleField({ parameters, elapsedSeconds, playing, onSelect }) {
   return (
     <points onClick={(event) => {
       event.stopPropagation()
-      onSelect('Combustion-product tracers', 'Particles are illustrative tracers. They do not encode measured smoke concentration, soot size, or toxic-gas transport.')
+      onSelect('Trazadores de productos de combustión', 'Las partículas son trazadores ilustrativos. No representan concentraciones medidas de humo, tamaño de hollín ni transporte de gases tóxicos.')
     }}>
       <bufferGeometry ref={geometryRef}>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
@@ -775,7 +775,7 @@ function SmokeScene({ parameters, elapsedSeconds, playing, onSelect }) {
     <Stage>
       <mesh onClick={(event) => {
         event.stopPropagation()
-        onSelect('Ventilated chamber', `Idealized characteristic length: ${parameters.chamberLengthM.toFixed(1)} m. The purge curve assumes uniform mixing.`)
+        onSelect('Cámara ventilada', `Longitud característica idealizada: ${parameters.chamberLengthM.toFixed(1)} m. La curva de purga supone una mezcla uniforme.`)
       }}>
         <boxGeometry args={[chamberLength, chamberWidth, chamberDepth]} />
         <meshBasicMaterial color="#31536a" wireframe transparent opacity={0.18} />
@@ -812,7 +812,7 @@ function ExtinctionScene({ parameters, onSelect }) {
         intensity={support}
         onSelect={(label, description) => onSelect(
           label,
-          `${description} Graphic support index: ${support.toFixed(2)}; it is not an extinction threshold or probability.`
+          `${description} Índice de soporte gráfico: ${support.toFixed(2)}; no es un umbral ni una probabilidad de extinción.`
         )}
       />
       <mesh position={[0, -0.78, 0]}>
@@ -860,7 +860,7 @@ function MicrogravityScene({ parameters, onSelect }) {
       </mesh>
       <mesh onClick={(event) => {
         event.stopPropagation()
-        onSelect('Gravity and ventilation inputs', `Selected g = ${parameters.gravityMs2.toFixed(1)} m/s²; imposed ventilation = ${parameters.ventilationMs.toFixed(2)} m/s.`)
+        onSelect('Entradas de gravedad y ventilación', `g seleccionada = ${parameters.gravityMs2.toFixed(1)} m/s²; ventilación impuesta = ${parameters.ventilationMs.toFixed(2)} m/s.`)
       }}>
         <boxGeometry args={[3, 0.02, 0.02]} />
         <meshBasicMaterial transparent opacity={0} />
@@ -915,7 +915,7 @@ class SceneErrorBoundary extends React.Component {
 
   render() {
     if (this.state.failed) {
-      return <SceneFallback message="3D rendering is unavailable. The model explanation and controls remain accessible." />
+      return <SceneFallback message="La visualización 3D no está disponible. La explicación del modelo y sus controles siguen accesibles." />
     }
     return this.props.children
   }
@@ -1002,17 +1002,17 @@ export default function ExperimentSimulator3D({ onOpenExperiment }) {
     <section className="lab-simulations" aria-labelledby="lab-simulations-heading">
       <div className="lab-section-heading">
         <div>
-          <span className="panel-kicker">INTERACTIVE 3D LABORATORY</span>
-          <h3 id="lab-simulations-heading">Explore the model, not an invented result</h3>
+          <span className="panel-kicker">LABORATORIO 3D INTERACTIVO</span>
+          <h3 id="lab-simulations-heading">Explora el modelo, no un resultado inventado</h3>
         </div>
         <span className="lab-status-badge"><Activity size={13} /> {simulation.classification}</span>
       </div>
       <p className="lab-section-intro">
-        Manipulate each scene with the mouse or touch: drag to rotate, scroll to zoom, and right-drag to pan.
-        Pointing across the view adds a subtle perspective response. Flame layers are schematic, not validated physical simulations or experimental results, and remain separate from the simplified model outputs.
+        Manipula cada escena con el ratón o la pantalla táctil: arrastra para girar, desplázate para acercar o alejar y arrastra con el botón derecho para mover la vista.
+        El movimiento del puntero añade una respuesta sutil de perspectiva. Las capas de llama son esquemáticas, no simulaciones físicas validadas ni resultados experimentales, y se muestran separadas de las salidas del modelo simplificado.
       </p>
 
-      <div className="lab-simulation-tabs" role="tablist" aria-label="3D combustion visualizations">
+      <div className="lab-simulation-tabs" role="tablist" aria-label="Visualizaciones 3D de combustión">
         {simulationList.map((item, index) => (
           <button
             type="button"
@@ -1041,14 +1041,14 @@ export default function ExperimentSimulator3D({ onOpenExperiment }) {
             <div className="lab-3d-scene-label">
               <span className="lab-live-dot" />
               {simulation.title}
-              <span>CONCEPT / MODEL</span>
+              <span>CONCEPTO / MODELO</span>
             </div>
             <SceneErrorBoundary>
               <Canvas
                 camera={{ position: [4.1, 2.9, 5], fov: 40 }}
                 dpr={[1, 1.4]}
                 gl={{ antialias: true, alpha: false, powerPreference: 'low-power' }}
-                fallback={<SceneFallback message="WebGL is unavailable in this browser." />}
+                fallback={<SceneFallback message="WebGL no está disponible en este navegador." />}
                 onPointerMissed={() => setSelectedPart(null)}
               >
                 <React.Suspense fallback={(
@@ -1068,18 +1068,18 @@ export default function ExperimentSimulator3D({ onOpenExperiment }) {
                 <CameraControls controlsRef={controlsRef} />
               </Canvas>
             </SceneErrorBoundary>
-            <div className="lab-camera-hint"><Camera size={12} /> Drag · zoom · pan</div>
+            <div className="lab-camera-hint"><Camera size={12} /> Arrastrar · acercar · mover</div>
             <button type="button" className="lab-camera-reset" onClick={() => controlsRef.current?.reset()}>
-              <RotateCw size={13} /> Reset view
+              <RotateCw size={13} /> Restablecer vista
             </button>
             <div className="lab-scene-legend">
-              <span><i className="legend-amber" /> Animated conceptual flame / thermal field</span>
-              <span><i className="legend-cyan" /> User-selected input</span>
+              <span><i className="legend-amber" /> Llama conceptual animada / campo térmico</span>
+              <span><i className="legend-cyan" /> Entrada seleccionada por el usuario</span>
             </div>
           </div>
           {selectableFlameLayers.length > 0 && (
-            <div className="lab-flame-layer-controls" role="group" aria-label="Inspect conceptual flame layers">
-              <span>SELECT A FLAME LAYER</span>
+            <div className="lab-flame-layer-controls" role="group" aria-label="Examinar las capas conceptuales de la llama">
+              <span>SELECCIONA UNA CAPA DE LA LLAMA</span>
               <div>
                 {selectableFlameLayers.map((layer) => (
                   <button
@@ -1100,9 +1100,9 @@ export default function ExperimentSimulator3D({ onOpenExperiment }) {
             <Info size={14} />
             {selectedPart
               ? <span><strong>{selectedPart.label}:</strong> {selectedPart.description}</span>
-              : <span>Select a model element in the 3D view for contextual information.</span>}
+              : <span>Selecciona un elemento del modelo 3D para ver información contextual.</span>}
           </div>
-          <React.Suspense fallback={<div className="lab-chart-loading" role="status">Loading model chart...</div>}>
+          <React.Suspense fallback={<div className="lab-chart-loading" role="status">Cargando la gráfica del modelo...</div>}>
             <ExperimentModelChart
               id={simulation.id}
               data={chartData}
@@ -1115,11 +1115,11 @@ export default function ExperimentSimulator3D({ onOpenExperiment }) {
           </React.Suspense>
         </div>
 
-        <aside className="lab-3d-controls" aria-label={`${simulation.title} controls`}>
+        <aside className="lab-3d-controls" aria-label={`Controles de ${simulation.title}`}>
           <div className="lab-3d-controls-heading">
             <div>
               <span className="lab-simulation-number">
-                {String(simulationList.findIndex((item) => item.id === activeId) + 1).padStart(2, '0')} / 05 · MODEL VIEW
+                {String(simulationList.findIndex((item) => item.id === activeId) + 1).padStart(2, '0')} / 05 · VISTA DEL MODELO
               </span>
               <h4>{simulation.title}</h4>
             </div>
@@ -1140,20 +1140,20 @@ export default function ExperimentSimulator3D({ onOpenExperiment }) {
           <div className="lab-playback-panel">
             <div className="lab-playback-status">
               <span className={playing ? 'lab-live-dot is-running' : 'lab-live-dot'} />
-              {playing ? 'RUNNING' : 'PAUSED'} · t = {elapsedSeconds.toFixed(1)} s
+              {playing ? 'EN EJECUCIÓN' : 'EN PAUSA'} · t = {elapsedSeconds.toFixed(1)} s
             </div>
             <div className="lab-playback-actions">
-              <button type="button" onClick={() => setPlaying((current) => !current)} aria-label={playing ? 'Pause model' : 'Start model'}>
+              <button type="button" onClick={() => setPlaying((current) => !current)} aria-label={playing ? 'Pausar modelo' : 'Iniciar modelo'}>
                 {playing ? <Pause size={14} /> : <Play size={14} />}
-                {playing ? 'Pause' : 'Start'}
+                {playing ? 'Pausar' : 'Iniciar'}
               </button>
-              <button type="button" onClick={resetClock} aria-label="Reset model time">
-                <RotateCcw size={14} /> Restart
+              <button type="button" onClick={resetClock} aria-label="Reiniciar el tiempo del modelo">
+                <RotateCcw size={14} /> Reiniciar
               </button>
             </div>
             <label className="lab-rate-control">
-              <span>Playback rate</span>
-              <select value={playbackRate} onChange={(event) => setPlaybackRate(Number(event.target.value))} aria-label="Playback rate">
+              <span>Velocidad de reproducción</span>
+              <select value={playbackRate} onChange={(event) => setPlaybackRate(Number(event.target.value))} aria-label="Velocidad de reproducción">
                 <option value={0.5}>0.5×</option>
                 <option value={1}>1×</option>
                 <option value={2}>2×</option>
@@ -1169,22 +1169,22 @@ export default function ExperimentSimulator3D({ onOpenExperiment }) {
               onClick={() => setCompareDefault((current) => !current)}
             >
               <Activity size={14} />
-              {compareDefault ? 'Hide default comparison' : 'Compare with defaults'}
+              {compareDefault ? 'Ocultar comparación predeterminada' : 'Comparar con valores predeterminados'}
             </button>
             <button type="button" onClick={restoreParameters}>
-              <RotateCcw size={14} /> Restore parameter defaults
+              <RotateCcw size={14} /> Restaurar parámetros predeterminados
             </button>
           </div>
 
           <details className="lab-model-assumptions">
-            <summary>Model equation, initial conditions, and limitations</summary>
+            <summary>Ecuación del modelo, condiciones iniciales y limitaciones</summary>
             <p>{simulation.model}</p>
-            <p><strong>Initial conditions:</strong> t = 0 s; parameter values shown above. Time resets when a model is changed.</p>
-            <p><strong>Assumptions and limitations:</strong> {simulation.assumptions}</p>
+            <p><strong>Condiciones iniciales:</strong> t = 0 s; valores de los parámetros indicados arriba. El tiempo se reinicia al cambiar de modelo.</p>
+            <p><strong>Supuestos y limitaciones:</strong> {simulation.assumptions}</p>
           </details>
 
           <div className="lab-related-evidence">
-            <span className="panel-kicker">RELATED PRIMARY RECORDS</span>
+            <span className="panel-kicker">REGISTROS PRIMARIOS RELACIONADOS</span>
             <div className="lab-evidence-buttons">
               {simulation.records.map((id) => (
                 <button type="button" key={id} onClick={() => onOpenExperiment(id)}>
@@ -1193,15 +1193,15 @@ export default function ExperimentSimulator3D({ onOpenExperiment }) {
               ))}
             </div>
             <div className="lab-evidence-links">
-              <a href="#research"><BookOpen size={13} /> Research Intelligence</a>
-              <a href="#combustion"><Activity size={13} /> Combustion Explorer</a>
-              <a href="#assistant"><Info size={13} /> Ask IGNIS AI</a>
+              <a href="#research"><BookOpen size={13} /> Inteligencia de investigación</a>
+              <a href="#combustion"><Activity size={13} /> Explorador de combustión</a>
+              <a href="#assistant"><Info size={13} /> Consultar a IGNIS IA</a>
             </div>
           </div>
         </aside>
       </div>
       <p className="lab-chart-caveat">
-        All curves are computed from the displayed simplified relations or explicit visualization mappings. No curve represents an experimental measurement or NASA-validated prediction.
+        Todas las curvas se calculan a partir de las relaciones simplificadas mostradas o de correspondencias explícitas de visualización. Ninguna representa una medición experimental ni una predicción validada por NASA.
       </p>
     </section>
   )

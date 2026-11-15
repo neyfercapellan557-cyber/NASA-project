@@ -1,43 +1,92 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import {
   Activity,
+  ArrowLeftRight,
+  ArrowRight,
   ArrowUpRight,
+  Atom,
   BrainCircuit,
+  Box,
   ChartNoAxesCombined,
   Database,
   FileText,
+  FlaskConical,
   Flame,
+  Globe,
   RefreshCw
 } from 'lucide-react'
 
 import { getSystemStatus } from '../api'
 
+const DashboardHeroVisual = React.lazy(() => import('./DashboardHeroVisual'))
+
 const moduleLinks = [
   {
     href: '#research',
-    title: 'Research Intelligence',
-    description: 'Indexed studies and external bibliographic search.',
+    title: 'Inteligencia de investigación',
+    description: 'Estudios indexados y búsqueda bibliográfica externa.',
     icon: FileText
   },
   {
+    href: '#digital-twin',
+    title: 'Gemelo digital del hábitat',
+    description: 'Explora un hábitat conceptual y sus condiciones monitorizadas.',
+    icon: Box
+  },
+  {
+    href: '#experiments-lab',
+    title: 'Laboratorio de experimentos',
+    description: 'Explora modelos 3D de combustión y experimentos documentados.',
+    icon: FlaskConical
+  },
+  {
+    href: '#microgravity-lab',
+    title: 'Laboratorio de gravedad',
+    description: 'Compara condiciones con un modelo simplificado de gota.',
+    icon: ArrowLeftRight
+  },
+  {
     href: '#combustion',
-    title: 'Combustion Explorer',
-    description: 'Compare qualitative flame and transport behavior.',
+    title: 'Explorador de combustión',
+    description: 'Compara cualitativamente la llama y los mecanismos de transporte.',
     icon: Flame
   },
   {
     href: '#habitat-safety',
-    title: 'Habitat Safety',
-    description: 'Connect evidence to crewed-habitat safety reviews.',
+    title: 'Seguridad del hábitat',
+    description: 'Relaciona la evidencia con la revisión de seguridad de hábitats tripulados.',
     icon: Activity
   },
   {
+    href: '#next-gen-safety',
+    title: 'Seguridad de nueva generación',
+    description: 'Explora conceptos propuestos y distínguelos de las prácticas establecidas.',
+    icon: Atom
+  },
+  {
+    href: '#earth-applications',
+    title: 'Aplicaciones terrestres',
+    description: 'Revisa posibles aplicaciones terrestres y sus limitaciones.',
+    icon: Globe
+  },
+  {
     href: '#assistant',
-    title: 'IGNIS AI Assistant',
-    description: 'Ask the local research collection and inspect evidence.',
+    title: 'Asistente de IA IGNIS',
+    description: 'Consulta la colección científica local y revisa la evidencia.',
     icon: BrainCircuit
   }
 ]
+
+function HeroModelPreview() {
+  return (
+    <div className="hero-model-preview" role="img" aria-label="Vista esquemática de una llama esférica en microgravedad">
+      <div className="hero-orbit hero-orbit-a" />
+      <div className="hero-orbit hero-orbit-b" />
+      <div className="hero-core"><Flame size={62} strokeWidth={1.2} /></div>
+      <span className="hero-preview-status">INICIANDO VISTA 3D INTERACTIVA</span>
+    </div>
+  )
+}
 
 function MetricCard({ icon: Icon, label, value, detail, loading, tone }) {
   return (
@@ -58,6 +107,7 @@ export default function Dashboard() {
   const [status, setStatus] = React.useState(null)
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState('')
+  const [heroModelReady, setHeroModelReady] = React.useState(false)
 
   const refresh = React.useCallback(async (signal) => {
     setLoading(true)
@@ -86,6 +136,16 @@ export default function Dashboard() {
     return () => controller.abort()
   }, [])
 
+  React.useEffect(() => {
+    if (typeof window.requestIdleCallback === 'function') {
+      const idleHandle = window.requestIdleCallback(() => setHeroModelReady(true), { timeout: 1400 })
+      return () => window.cancelIdleCallback?.(idleHandle)
+    }
+
+    const timeoutHandle = window.setTimeout(() => setHeroModelReady(true), 650)
+    return () => window.clearTimeout(timeoutHandle)
+  }, [])
+
   const knowledgeBase = status?.knowledge_base
   const ai = status?.ai
   const systemOnline = status?.status === 'operational'
@@ -93,43 +153,52 @@ export default function Dashboard() {
   return (
     <section className="dashboard">
       <div className="welcome">
-        <div>
+        <div className="welcome-copy">
           <div className="eyebrow">
-            <span className={`status-dot ${systemOnline ? '' : 'status-dot-warning'}`} />
-            MISSION CONTROL
+            <span className={`status-dot ${loading ? '' : systemOnline ? '' : 'status-dot-warning'}`} />
+            {loading ? 'CONTROL DE MISIÓN · CONECTANDO' : systemOnline ? 'CONTROL DE MISIÓN · OPERATIVO' : 'CONTROL DE MISIÓN · SIN CONEXIÓN'}
           </div>
-          <h2>Research-to-Safety Intelligence</h2>
+          <h2>Inteligencia para la investigación y la seguridad</h2>
           <p>
-            Connect combustion research in reduced gravity with evidence-informed
-            questions for space-habitat safety.
+            Relaciona la investigación sobre combustión en gravedad reducida con preguntas
+            sobre seguridad en hábitats espaciales, basadas en evidencia.
           </p>
+          <div className="welcome-actions">
+            <a className="welcome-primary-action" href="#experiments-lab">
+              Explorar experimentos 3D <ArrowRight size={15} />
+            </a>
+            <a className="welcome-secondary-action" href="#research">
+              Consultar evidencia científica <ArrowRight size={14} />
+            </a>
+          </div>
         </div>
 
-        <div className="hero-visual" aria-hidden="true">
+        <div className="hero-visual">
           <div className="hero-grid" />
-          <div className="hero-orbit hero-orbit-a" />
-          <div className="hero-orbit hero-orbit-b" />
-          <div className="hero-core"><Flame size={66} strokeWidth={1.2} /></div>
-          <span className="hero-coordinate coordinate-one">MICROGRAVITY // RESEARCH</span>
-          <span className="hero-coordinate coordinate-two">SCIENCE → SAFETY</span>
-          <span className="hero-coordinate coordinate-three">IGNIS</span>
+          {heroModelReady ? (
+            <Suspense fallback={<HeroModelPreview />}>
+              <DashboardHeroVisual />
+            </Suspense>
+          ) : <HeroModelPreview />}
+          <span className="hero-coordinate coordinate-one">MICROGRAVEDAD // INVESTIGACIÓN</span>
+          <span className="hero-coordinate coordinate-two">ESQUEMA · NO VALIDADO</span>
         </div>
       </div>
 
       <div className="section-heading">
         <div>
-          <h3>System status</h3>
-          <p>Live values reported by the IGNIS backend</p>
+          <h3>Estado del sistema</h3>
+          <p>Estado actual informado por el backend de IGNIS</p>
         </div>
         <div className="dashboard-status-actions">
           <span className={`live-label ${systemOnline ? '' : 'live-label-warning'}`}>
             <span className={`status-dot ${systemOnline ? '' : 'status-dot-warning'}`} />
-            {loading ? 'CHECKING' : systemOnline ? 'OPERATIONAL' : 'DEGRADED'}
+            {loading ? 'CONSULTANDO' : systemOnline ? 'OPERATIVO' : 'DEGRADADO'}
           </span>
           <button
             className="icon-button"
             type="button"
-            aria-label="Refresh system status"
+            aria-label="Actualizar el estado del sistema"
             onClick={() => refresh()}
             disabled={loading}
           >
@@ -140,7 +209,7 @@ export default function Dashboard() {
 
       {error && (
         <div className="inline-error" role="alert">
-          <strong>Backend unavailable</strong>
+          <strong>Servicio local de IGNIS no disponible</strong>
           <span>{error}</span>
         </div>
       )}
@@ -148,30 +217,36 @@ export default function Dashboard() {
       <div className="metrics-grid">
         <MetricCard
           icon={FileText}
-          label="INDEXED DOCUMENTS"
+          label="DOCUMENTOS INDEXADOS"
           value={knowledgeBase?.documents ?? '—'}
-          detail="Distinct sources in ChromaDB"
+          detail="Fuentes distintas en ChromaDB"
           loading={loading}
         />
         <MetricCard
           icon={ChartNoAxesCombined}
-          label="RESEARCH FRAGMENTS"
+          label="FRAGMENTOS CIENTÍFICOS"
           value={knowledgeBase?.chunks?.toLocaleString() ?? '—'}
-          detail="Stored in the active collection"
+          detail="Almacenados en la colección activa"
           loading={loading}
         />
         <MetricCard
           icon={Database}
-          label="VECTOR COLLECTION"
+          label="COLECCIÓN VECTORIAL"
           value={knowledgeBase?.collection ?? '—'}
-          detail={knowledgeBase?.status === 'online' ? 'Connected' : 'Not connected'}
+          detail={knowledgeBase?.status === 'online' ? 'Conectada' : 'Sin conexión'}
           loading={loading}
         />
         <MetricCard
           icon={BrainCircuit}
-          label="LOCAL AI MODEL"
-          value={ai?.available ? 'ONLINE' : ai?.status?.toUpperCase() ?? '—'}
-          detail={ai?.model ?? 'Model status unavailable'}
+          label="MODELO DE IA LOCAL"
+          value={ai?.available ? 'EN LÍNEA' : ({
+            offline: 'SIN CONEXIÓN',
+            model_missing: 'MODELO NO DISPONIBLE',
+            configuration_missing: 'FALTA CONFIGURACIÓN',
+            configuration_error: 'ERROR DE CONFIGURACIÓN',
+            error: 'ERROR'
+          }[ai?.status] ?? '—')}
+          detail={ai?.model ?? 'Estado del modelo no disponible'}
           loading={loading}
           tone={ai?.available ? 'online-text' : 'warning-text'}
         />
@@ -185,8 +260,8 @@ export default function Dashboard() {
         <section className="panel module-panel">
           <div className="panel-heading">
             <div>
-              <h3>Mission modules</h3>
-              <p>Continue from evidence to safety applications</p>
+              <h3>Módulos de misión</h3>
+              <p>De la evidencia a sus aplicaciones en seguridad</p>
             </div>
           </div>
           <div className="module-link-list">
@@ -209,26 +284,26 @@ export default function Dashboard() {
         <section className="panel mission-flow-panel">
           <div className="panel-heading">
             <div>
-              <h3>Research-to-safety pathway</h3>
-              <p>IGNIS workflow concept</p>
+              <h3>Ruta de investigación a seguridad</h3>
+              <p>Flujo de trabajo de IGNIS</p>
             </div>
             <Activity size={20} />
           </div>
-          <div className="mission-flow" aria-label="Literature to evidence to safety context">
-            <span>Literature</span><i aria-hidden="true" />
-            <span>Evidence</span><i aria-hidden="true" />
-            <span>Safety context</span>
+          <div className="mission-flow" aria-label="De la literatura científica a la evidencia y el contexto de seguridad">
+            <span>Literatura</span><i aria-hidden="true" />
+            <span>Evidencia</span><i aria-hidden="true" />
+            <span>Contexto de seguridad</span>
           </div>
           <p className="mission-flow-note">
-            The pathway supports exploration; it does not calculate fire probabilities
-            or certify habitat systems.
+            Esta ruta facilita la exploración; no calcula probabilidades de incendio
+            ni certifica sistemas de hábitat.
           </p>
         </section>
       </div>
 
       <footer className="dashboard-footer">
-        <span>IGNIS SCIENTIFIC INTELLIGENCE</span>
-        <span>FLAME IN FREEFALL · NASA SPACE APPS 2026</span>
+        <span>IGNIS · INTELIGENCIA CIENTÍFICA</span>
+        <span>LLAMA EN CAÍDA LIBRE · DESAFÍO NASA SPACE APPS 2026</span>
       </footer>
     </section>
   )

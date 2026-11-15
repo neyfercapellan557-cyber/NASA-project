@@ -34,9 +34,9 @@ def generate_response(prompt: str) -> str:
         )
     elif LLM_PROVIDER == "openai-compatible":
         if not LLM_BASE_URL:
-            raise RuntimeError("LLM_BASE_URL must be configured.")
+            raise RuntimeError("Debes configurar LLM_BASE_URL.")
         if not LLM_API_KEY:
-            raise RuntimeError("LLM_API_KEY must be configured.")
+            raise RuntimeError("Debes configurar LLM_API_KEY.")
 
         payload = {
             "model": MODEL,
@@ -53,7 +53,7 @@ def generate_response(prompt: str) -> str:
             method="POST",
         )
     else:
-        raise RuntimeError(f"Unsupported LLM_PROVIDER: {LLM_PROVIDER}")
+        raise RuntimeError(f"Proveedor LLM_PROVIDER no compatible: {LLM_PROVIDER}")
 
     with urlopen(request, timeout=120) as response:
         result = json.loads(response.read().decode("utf-8"))
@@ -63,9 +63,9 @@ def generate_response(prompt: str) -> str:
 
     choices = result.get("choices")
     if not choices or not isinstance(choices[0], dict):
-        raise ValueError("The inference API returned no completion choices.")
+        raise ValueError("La API de inferencia no devolvió opciones de respuesta.")
     message = choices[0].get("message")
     content = message.get("content") if isinstance(message, dict) else None
     if not isinstance(content, str) or not content.strip():
-        raise ValueError("The inference API returned an empty completion.")
+        raise ValueError("La API de inferencia devolvió una respuesta vacía.")
     return content.strip()

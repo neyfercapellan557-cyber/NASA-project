@@ -4,11 +4,11 @@ import { AlertCircle, ArrowUpRight, BrainCircuit, LoaderCircle, Send } from 'luc
 import { askIgnis, getDocumentUrl } from '../api'
 
 const suggestedQuestions = [
-  'Hi, what can you help me with?',
-  'What is photosynthesis?',
-  'What does the indexed research say about combustion in reduced gravity?',
-  'Which sources discuss spherical diffusion flames?',
-  'What evidence is available about flame spread in spacecraft research?'
+  'Hola, ¿en qué puedes ayudarme?',
+  '¿Qué es la fotosíntesis?',
+  '¿Qué dicen las investigaciones indexadas sobre la combustión en gravedad reducida?',
+  '¿Qué fuentes estudian las llamas de difusión esféricas?',
+  '¿Qué evidencia existe sobre la propagación de llamas en naves espaciales?'
 ]
 
 export default function AssistantPage({ onAIActiveChange }) {
@@ -42,43 +42,43 @@ export default function AssistantPage({ onAIActiveChange }) {
   return (
     <section className="module-page assistant-page">
       <div className="module-page-header assistant-header">
-        <div className="eyebrow"><span className="status-dot" /> LOCAL AI · RAG FOR RESEARCH</div>
-        <h2>IGNIS AI Assistant</h2>
-        <p>Chat about general topics, or ask about combustion and space safety. Research answers use the indexed documents and show their evidence.</p>
+        <div className="eyebrow"><span className="status-dot" /> IA LOCAL · RAG CIENTÍFICO</div>
+        <h2>Asistente de IA IGNIS</h2>
+        <p>Conversa sobre temas generales o pregunta sobre combustión y seguridad espacial. Las respuestas científicas se basan en documentos indexados y muestran sus fuentes.</p>
       </div>
 
       <section className="assistant-console">
         <div className="assistant-console-heading">
           <span className="assistant-icon"><BrainCircuit size={22} /></span>
           <div>
-            <span className="panel-kicker">RESEARCH-TO-SAFETY ENGINE</span>
-            <h3>Ask IGNIS</h3>
+            <span className="panel-kicker">MOTOR DE INVESTIGACIÓN Y SEGURIDAD</span>
+            <h3>Pregunta a IGNIS</h3>
           </div>
-          <span className="local-model-badge">LOCAL MODEL</span>
+          <span className="local-model-badge">MODELO LOCAL</span>
         </div>
 
         <form className="assistant-form" onSubmit={submitQuestion}>
-          <label htmlFor="ignis-question">Your question</label>
+          <label htmlFor="ignis-question">Tu pregunta</label>
           <textarea
             id="ignis-question"
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
-            placeholder="Ask a general question or ask about combustion and space safety..."
+            placeholder="Escribe una pregunta general o sobre combustión y seguridad espacial..."
             rows={3}
             maxLength={1200}
           />
           <div className="assistant-form-footer">
-            <span>{question.length}/1200 · Research questions use local indexed sources</span>
+            <span>{question.length}/1200 · Las preguntas científicas consultan fuentes indexadas localmente</span>
             <button type="submit" className="primary-button" disabled={loading}>
               {loading ? <LoaderCircle className="loading-icon" size={16} /> : <Send size={15} />}
-              {loading ? 'THINKING' : 'ASK IGNIS'}
+              {loading ? 'ANALIZANDO' : 'PREGUNTAR'}
             </button>
           </div>
         </form>
 
         {!result && !loading && (
           <div className="suggested-questions">
-            <span className="panel-kicker">SUGGESTED QUESTIONS</span>
+            <span className="panel-kicker">PREGUNTAS SUGERIDAS</span>
             {suggestedQuestions.map((item) => (
               <button type="button" key={item} onClick={() => setQuestion(item)}>
                 {item}<ArrowUpRight size={14} />
@@ -90,7 +90,7 @@ export default function AssistantPage({ onAIActiveChange }) {
         {loading && (
           <div className="assistant-loading" role="status">
             <LoaderCircle className="loading-icon" size={20} />
-            Waiting for the local model…
+            Esperando la respuesta del modelo local…
           </div>
         )}
 
@@ -112,10 +112,10 @@ export default function AssistantPage({ onAIActiveChange }) {
               <section className="answer-panel">
                 <span className="panel-kicker">
                   {result.response_mode === 'general'
-                    ? 'GENERAL CHAT · LOCAL MODEL KNOWLEDGE'
-                    : 'RESEARCH RESPONSE · GROUNDED IN INDEXED EVIDENCE'}
+                    ? 'CONVERSACIÓN GENERAL · CONOCIMIENTO DEL MODELO LOCAL'
+                    : 'RESPUESTA CIENTÍFICA · BASADA EN EVIDENCIA INDEXADA'}
                 </span>
-                <h3>IGNIS response</h3>
+                <h3>Respuesta de IGNIS</h3>
                 <p>{result.answer}</p>
               </section>
             )}
@@ -124,16 +124,16 @@ export default function AssistantPage({ onAIActiveChange }) {
               <section className="assistant-evidence">
                 <div className="research-library-heading">
                   <div>
-                    <h3>Retrieved evidence</h3>
-                    <p>Source excerpts returned by the local retrieval system.</p>
+                    <h3>Evidencia recuperada</h3>
+                    <p>Fragmentos originales devueltos por el sistema local de búsqueda; se conserva el idioma de cada fuente.</p>
                   </div>
-                  <span>{result.evidence.length} EXCERPTS</span>
+                  <span>{result.evidence.length} FRAGMENTOS</span>
                 </div>
                 {result.evidence.map((source, index) => (
                   <article className="evidence-card" key={`${source.source}-${source.page}-${index}`}>
                     <div className="evidence-card-heading">
                       <strong>{source.source}</strong>
-                      <span>SOURCE {index + 1} · PAGE {source.page ?? '—'}</span>
+                      <span>FUENTE {index + 1} · PÁGINA {source.page ?? '—'}</span>
                     </div>
                     <p>{source.excerpt}</p>
                     <a
@@ -143,7 +143,7 @@ export default function AssistantPage({ onAIActiveChange }) {
                       target="_blank"
                       rel="noreferrer"
                     >
-                      Open source · page {source.page ?? '—'} <ArrowUpRight size={14} />
+                      Abrir fuente · página {source.page ?? '—'} <ArrowUpRight size={14} />
                     </a>
                   </article>
                 ))}
@@ -154,8 +154,8 @@ export default function AssistantPage({ onAIActiveChange }) {
       </section>
 
       <p className="science-disclaimer">
-        General responses use the local model's general knowledge. Research answers are limited to retrieved
-        excerpts; if the indexed data cannot support an answer, IGNIS will say so.
+        Las respuestas generales usan el conocimiento del modelo local. Las respuestas científicas se limitan a
+        los fragmentos recuperados; si los documentos indexados no bastan para responder, IGNIS lo indicará.
       </p>
     </section>
   )

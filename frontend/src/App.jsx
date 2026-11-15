@@ -29,16 +29,16 @@ const DigitalTwin = React.lazy(() => import('./components/ScientificExperiences'
 const MicrogravityLab = React.lazy(() => import('./components/ScientificExperiences').then((module) => ({ default: module.MicrogravityLab })))
 
 const navigation = [
-  { id: 'dashboard', name: 'Mission Dashboard', icon: LayoutDashboard },
-  { id: 'digital-twin', name: 'IGNIS Digital Twin', icon: Box },
-  { id: 'research', name: 'Research Intelligence', icon: Microscope },
-  { id: 'experiments-lab', name: 'Experiments Lab', icon: FlaskConical },
-  { id: 'microgravity-lab', name: 'Microgravity vs Earth', icon: ArrowLeftRight },
-  { id: 'combustion', name: 'Combustion Explorer', icon: Flame },
-  { id: 'habitat-safety', name: 'Habitat Safety', icon: ShieldCheck },
-  { id: 'next-gen-safety', name: 'Next-Gen Safety', icon: Atom },
-  { id: 'earth-applications', name: 'Earth Applications', icon: Globe2 },
-  { id: 'assistant', name: 'IGNIS AI Assistant', icon: BrainCircuit }
+  { id: 'dashboard', name: 'Panel de misión', icon: LayoutDashboard },
+  { id: 'digital-twin', name: 'Gemelo digital IGNIS', icon: Box },
+  { id: 'research', name: 'Inteligencia de investigación', icon: Microscope },
+  { id: 'experiments-lab', name: 'Laboratorio de experimentos', icon: FlaskConical },
+  { id: 'microgravity-lab', name: 'Laboratorio de gravedad', icon: ArrowLeftRight },
+  { id: 'combustion', name: 'Explorador de combustión', icon: Flame },
+  { id: 'habitat-safety', name: 'Seguridad del hábitat', icon: ShieldCheck },
+  { id: 'next-gen-safety', name: 'Seguridad de nueva generación', icon: Atom },
+  { id: 'earth-applications', name: 'Aplicaciones terrestres', icon: Globe2 },
+  { id: 'assistant', name: 'Asistente de IA IGNIS', icon: BrainCircuit }
 ]
 
 const sections = {
@@ -82,16 +82,16 @@ export default function App() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <a className="brand" href="#dashboard" aria-label="IGNIS home">
+        <a className="brand" href="#dashboard" aria-label="Inicio de IGNIS">
           <div className="brand-icon"><Flame size={25} /></div>
           <div>
             <h1>IGNIS</h1>
-            <span>SCIENTIFIC INTELLIGENCE</span>
+            <span>INTELIGENCIA CIENTÍFICA</span>
           </div>
         </a>
 
-        <div className="nav-label">WORKSPACE</div>
-        <nav className="navigation" aria-label="Main navigation">
+        <div className="nav-label">ESPACIO DE TRABAJO</div>
+        <nav className="navigation" aria-label="Navegación principal">
           {navigation.map((item) => {
             const Icon = item.icon
             const active = item.id === activeSection
@@ -112,8 +112,8 @@ export default function App() {
         </nav>
 
         <div className="sidebar-bottom">
-          <span className="sidebar-caption">EVIDENCE-FIRST EXPLORATION</span>
-          <span className="version">LOCAL RAG · CHROMADB</span>
+          <span className="sidebar-caption">EXPLORACIÓN BASADA EN EVIDENCIA</span>
+          <span className="version">RAG LOCAL · CHROMADB</span>
         </div>
       </aside>
 
@@ -124,14 +124,14 @@ export default function App() {
             <span>/</span> {currentSection.name}
           </div>
           <div className="top-actions">
-            <a className="icon-button" href="#research" aria-label="Open research library" title="Open research library">
+            <a className="icon-button" href="#research" aria-label="Abrir biblioteca científica" title="Abrir biblioteca científica">
               <Search size={19} />
             </a>
-            <div className="user-avatar" aria-label="IGNIS Research">IC</div>
+            <div className="user-avatar" aria-label="Investigación IGNIS">IG</div>
           </div>
         </header>
 
-        <React.Suspense fallback={<div className="lab-simulation-loading" role="status">Loading IGNIS experience…</div>}>
+        <React.Suspense fallback={<div className="lab-simulation-loading" role="status">Cargando la experiencia IGNIS…</div>}>
           <div className="route-transition" key={activeSection}>
             <ActivePage
               {...(activeSection === 'assistant'

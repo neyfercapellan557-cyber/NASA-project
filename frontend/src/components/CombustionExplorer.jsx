@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowDown, ExternalLink, Flame, Wind } from 'lucide-react'
+import { ArrowDown, ArrowLeftRight, ArrowRight, BookOpen, ExternalLink, Flame, FlaskConical, Wind } from 'lucide-react'
 
 import { getDocumentUrl } from '../api'
 
@@ -84,34 +84,34 @@ const phenomenonNotes = [
     text: 'La guía de NASA describe la eliminación de la interacción compleja entre flujo boyante y realimentación de energía a la llama en experimentos de microgravedad.'
   },
   {
-    title: 'Heat, oxygen, and diffusion',
-    text: 'NASA frames combustion as coupled heat- and mass-transport phenomena with chemistry. Oxygen and species transport must be interpreted within the specific experimental setup.'
+    title: 'Calor, oxígeno y difusión',
+    text: 'NASA describe la combustión como un conjunto acoplado de fenómenos de transporte de calor y masa, junto con reacciones químicas. El transporte de oxígeno y otras especies debe interpretarse dentro de cada configuración experimental.'
   },
   {
-    title: 'Ventilation and flame form',
-    text: 'Forced flow and boundary conditions can change the observed flame. A spherical diffusion flame is one research configuration, not a universal microgravity shape.'
+    title: 'Ventilación y forma de la llama',
+    text: 'El flujo forzado y las condiciones de contorno pueden cambiar la llama observada. Una llama esférica de difusión es una configuración de investigación, no una forma universal en microgravedad.'
   },
   {
-    title: 'Soot formation',
-    text: 'The NASA guide identifies soot production as a microgravity research topic. This interface reports no soot yield or direction of change.'
+    title: 'Formación de hollín',
+    text: 'La guía de NASA identifica la producción de hollín como un tema de investigación en microgravedad. Esta interfaz no informa rendimientos de hollín ni tendencias de cambio.'
   }
 ]
 
 const transportMechanisms = [
   {
     id: 'buoyancy',
-    label: 'Buoyancy',
-    description: 'At 1 g, density differences can contribute to natural convection. The schematic arrows indicate direction only; they do not represent measured velocity.'
+    label: 'Flotabilidad',
+    description: 'A 1 g, las diferencias de densidad pueden contribuir a la convección natural. Las flechas esquemáticas indican solo la dirección; no representan velocidades medidas.'
   },
   {
     id: 'diffusion',
-    label: 'Diffusion',
-    description: 'With buoyancy-driven flow reduced, molecular transport is an important consideration. The ring is a conceptual cue, not a measured concentration field.'
+    label: 'Difusión',
+    description: 'Cuando se reduce el flujo impulsado por flotabilidad, el transporte molecular es un aspecto importante. El anillo es una señal conceptual, no un campo de concentración medido.'
   },
   {
     id: 'ventilation',
-    label: 'Imposed ventilation',
-    description: 'Forced flow and boundary conditions can shape transport in either gravity environment. The arrows are illustrative and are not a validated flow solution.'
+    label: 'Ventilación impuesta',
+    description: 'El flujo forzado y las condiciones de contorno pueden influir en el transporte en cualquier entorno gravitatorio. Las flechas son ilustrativas y no constituyen una solución de flujo validada.'
   }
 ]
 
@@ -123,23 +123,29 @@ export default function CombustionExplorer() {
   return (
     <section className="module-page">
       <div className="module-page-header combustion-header">
-        <div className="eyebrow"><span className="status-dot" /> COMBUSTION PHYSICS</div>
-        <h2>Combustion Explorer</h2>
-        <p>Compare the roles of gravity, transport, and flame configuration without implying a universal flame shape.</p>
+        <div className="eyebrow"><span className="status-dot" /> FÍSICA DE LA COMBUSTIÓN</div>
+        <h2>Explorador de combustión</h2>
+        <p>Compara el papel de la gravedad, el transporte y la configuración de la llama sin asumir una forma universal.</p>
       </div>
+
+      <nav className="experience-links combustion-experience-links" aria-label="Experiencias de IGNIS relacionadas">
+        <a href="#experiments-lab"><FlaskConical size={14} /> Explorar modelos 3D interactivos <ArrowRight size={13} /></a>
+        <a href="#microgravity-lab"><ArrowLeftRight size={14} /> Comparar entornos gravitatorios <ArrowRight size={13} /></a>
+        <a href="#research"><BookOpen size={14} /> Revisar evidencia de las fuentes <ArrowRight size={13} /></a>
+      </nav>
 
       <section className="science-panel" aria-labelledby="combustion-comparison-title">
         <div className="science-panel-heading">
           <div>
-            <span className="panel-kicker">QUALITATIVE COMPARISON</span>
-            <h3 id="combustion-comparison-title">Gravity changes the transport context</h3>
+            <span className="panel-kicker">COMPARACIÓN CUALITATIVA</span>
+            <h3 id="combustion-comparison-title">La gravedad cambia el contexto del transporte</h3>
           </div>
-          <div className="diagram-controls" role="group" aria-label="Select diagram">
+          <div className="diagram-controls" role="group" aria-label="Seleccionar diagrama">
             <button type="button" className={view === 'morphology' ? 'selected' : ''} onClick={() => setView('morphology')}>
-              <Flame size={15} /> Flame form
+              <Flame size={15} /> Forma de la llama
             </button>
             <button type="button" className={view === 'transport' ? 'selected' : ''} onClick={() => setView('transport')}>
-              <Wind size={15} /> Transport
+              <Wind size={15} /> Transporte
             </button>
           </div>
         </div>
@@ -147,12 +153,12 @@ export default function CombustionExplorer() {
         <div className="transport-explorer">
           <div className="transport-explorer-heading">
             <div>
-              <span className="panel-kicker">INTERACTIVE CONCEPT LENS</span>
-              <h4>Explore a transport mechanism</h4>
+              <span className="panel-kicker">EXPLORACIÓN CONCEPTUAL INTERACTIVA</span>
+              <h4>Explora un mecanismo de transporte</h4>
             </div>
-            <span className="concept-badge">QUALITATIVE · NOT A SIMULATION</span>
+            <span className="concept-badge">CUALITATIVO · NO ES UNA SIMULACIÓN</span>
           </div>
-          <div className="transport-mechanism-controls" role="group" aria-label="Highlight a transport mechanism">
+          <div className="transport-mechanism-controls" role="group" aria-label="Resaltar un mecanismo de transporte">
             {transportMechanisms.map((item) => (
               <button
                 type="button"
@@ -171,14 +177,14 @@ export default function CombustionExplorer() {
         </div>
         <div className="diagram-caveat">
           <ArrowDown size={16} />
-          <span>Schematic only — not to scale and not an experimental data plot. IGNIS has no standardized measured series to chart here. Real behavior depends on fuel, boundary conditions, radiation, and ventilation.</span>
+          <span>Solo esquemático: no está a escala ni es una gráfica de datos experimentales. IGNIS no dispone aquí de una serie de mediciones estandarizada. El comportamiento real depende del combustible, las condiciones de contorno, la radiación y la ventilación.</span>
         </div>
       </section>
 
       <div className="phenomenon-grid">
         {phenomenonNotes.map((item, index) => (
           <article className="phenomenon-card" key={item.title}>
-            <span className="panel-kicker">0{index + 1} / RESEARCH LENS</span>
+            <span className="panel-kicker">0{index + 1} / EJE DE INVESTIGACIÓN</span>
             <h3>{item.title}</h3>
             <p>{item.text}</p>
           </article>
@@ -192,7 +198,7 @@ export default function CombustionExplorer() {
         rel="noreferrer"
       >
         <ExternalLink size={15} />
-        NASA ISS Researcher’s Guide · indexed source, pp. 3, 9–11
+        Guía de investigación de la EEI de NASA · fuente indexada, págs. 3 y 9–11
       </a>
     </section>
   )

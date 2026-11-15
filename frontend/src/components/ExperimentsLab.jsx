@@ -23,25 +23,25 @@ const nasaVideoBase = 'https://images-assets.nasa.gov/video'
 const experiments = [
   {
     id: 'flex',
-    name: 'Flame Extinguishment Experiment (FLEX)',
-    type: 'Droplet combustion study',
-    organization: 'NASA Glenn Research Center',
-    domain: 'Droplet combustion',
+    name: 'Experimento de extinción de llama (FLEX)',
+    type: 'Estudio de combustión de gotas',
+    organization: 'Centro de Investigación Glenn de la NASA',
+    domain: 'Combustión de gotas',
     year: '2015',
-    dateContext: 'Test series: March 2009–December 2011 · report published 2015',
-    location: 'Combustion Integrated Rack, Destiny laboratory, International Space Station',
-    background: 'FLEX is a NASA program of droplet-combustion experiments in the ISS Combustion Integrated Rack, using the Multi-User Droplet Combustion Apparatus.',
-    objective: 'Document droplet combustion behavior in microgravity and make experimental procedures and results available for further scientific interpretation.',
-    methodology: 'NASA describes experiments using the Multi-User Droplet Combustion Apparatus (MDCA) inside the Combustion Integrated Rack. The cited technical publication documents the hardware, diagnostics, procedures, and analysis methods.',
-    equipment: 'MDCA and Combustion Integrated Rack (CIR).',
-    materials: 'Liquid-fuel droplets; the cited abstract does not identify fuel species.',
-    findings: 'The NASA report presents data from the first 284 tests. Its abstract explicitly says the report makes the results available without interpreting them; this archive therefore does not add quantitative conclusions.',
-    limitations: 'The cited report covers a defined test series and hardware configuration. Its abstract does not establish that the results apply to every fuel, droplet size, or spacecraft environment.',
+    dateContext: 'Serie de ensayos: marzo de 2009–diciembre de 2011 · informe publicado en 2015',
+    location: 'Combustion Integrated Rack, laboratorio Destiny, Estación Espacial Internacional (EEI)',
+    background: 'FLEX es un programa de NASA de experimentos sobre combustión de gotas en la Combustion Integrated Rack de la EEI, que utiliza el Multi-User Droplet Combustion Apparatus.',
+    objective: 'Documentar el comportamiento de la combustión de gotas en microgravedad y poner a disposición los procedimientos y resultados experimentales para su análisis posterior.',
+    methodology: 'NASA describe experimentos realizados con el Multi-User Droplet Combustion Apparatus (MDCA) dentro de la Combustion Integrated Rack. La publicación técnica citada documenta el equipo, los diagnósticos, los procedimientos y los métodos de análisis.',
+    equipment: 'MDCA y Combustion Integrated Rack (CIR).',
+    materials: 'Gotas de combustible líquido; el resumen citado no identifica las especies de combustible.',
+    findings: 'El informe de NASA presenta datos de los primeros 284 ensayos. Su resumen indica explícitamente que se publican sin interpretación; por ello, este archivo no añade conclusiones cuantitativas.',
+    limitations: 'El informe citado cubre una serie de ensayos y una configuración de equipo determinadas. Su resumen no establece que los resultados se apliquen a todo combustible, tamaño de gota o entorno de una nave espacial.',
     references: [
       {
-        label: 'NASA NTRS · Detailed Results from the FLEX Experiment',
+        label: 'Título original de NASA NTRS · Detailed Results from the FLEX Experiment',
         url: 'https://ntrs.nasa.gov/citations/20150023456',
-        kind: 'Technical publication · NASA/TP-2015-216046'
+        kind: 'Publicación técnica · NASA/TP-2015-216046'
       }
     ],
     related: ['flex-2'],
@@ -49,25 +49,25 @@ const experiments = [
   },
   {
     id: 'flex-2',
-    name: 'Flame Extinguishment Experiment-2 (FLEX-2)',
-    type: 'Droplet combustion operations record',
-    organization: 'NASA Glenn Research Center',
-    domain: 'Droplet combustion',
+    name: 'Experimento de extinción de llama 2 (FLEX-2)',
+    type: 'Registro operativo de combustión de gotas',
+    organization: 'Centro de Investigación Glenn de la NASA',
+    domain: 'Combustión de gotas',
     year: '2013',
-    dateContext: 'NASA image record dated 10 April 2013; the caption says the test was scheduled, not that this photograph shows a test result.',
-    location: 'Multi-User Droplet Combustion Apparatus in the Destiny laboratory, ISS',
-    background: 'NASA’s image record identifies the MDCA fuel reservoirs as containing liquid fuel for droplet-combustion experiments.',
-    objective: 'Investigate droplet combustion in microgravity using the MDCA; this entry is limited to the facts documented in the NASA operations photograph.',
-    methodology: 'NASA documents an MDCA fuel-reservoir replacement with the chamber insert partially withdrawn, in support of FLEX-2. The image caption says execution was scheduled to be controlled from the ground.',
-    equipment: 'MDCA fuel reservoirs and Chamber Insert Assembly.',
-    materials: 'Liquid fuel is identified generically; its chemical composition is not specified in the cited image record.',
-    findings: 'The cited source documents equipment servicing and planned operations only. It does not report experimental outcomes, so none are inferred here.',
-    limitations: 'A preparation photograph is not evidence of a combustion observation. No FLEX-2 results are claimed in this record.',
+    dateContext: 'Registro fotográfico de NASA fechado el 10 de abril de 2013; el pie indica que el ensayo estaba programado, no que la imagen muestre un resultado.',
+    location: 'Multi-User Droplet Combustion Apparatus, laboratorio Destiny, EEI',
+    background: 'El registro de imágenes de NASA identifica los depósitos de combustible del MDCA como recipientes de combustible líquido para experimentos de combustión de gotas.',
+    objective: 'Investigar la combustión de gotas en microgravedad mediante el MDCA. Esta ficha se limita a los hechos documentados en la fotografía operativa de NASA.',
+    methodology: 'NASA documenta el reemplazo de los depósitos de combustible del MDCA con el inserto de cámara parcialmente retirado, como apoyo a FLEX-2. El pie de foto indica que la ejecución del ensayo se controlaría desde tierra.',
+    equipment: 'Depósitos de combustible del MDCA y conjunto de inserto de cámara.',
+    materials: 'Se identifica el combustible líquido de forma genérica; el registro fotográfico citado no especifica su composición química.',
+    findings: 'La fuente citada documenta el mantenimiento del equipo y operaciones planificadas, pero no informa resultados experimentales. Por ello, no se infieren resultados.',
+    limitations: 'Una fotografía de preparación no demuestra una observación de combustión. Esta ficha no atribuye resultados a FLEX-2.',
     references: [
       {
-        label: 'NASA Image and Video Library · MDCA reservoir service for FLEX-2',
+        label: 'Título original del registro multimedia de NASA · MDCA reservoir service for FLEX-2',
         url: 'https://images.nasa.gov/details/iss035e017702',
-        kind: 'NASA image record · 10 April 2013'
+        kind: 'Registro de imagen de NASA · 10 de abril de 2013'
       }
     ],
     related: ['flex'],
@@ -75,39 +75,39 @@ const experiments = [
       {
         type: 'image',
         src: `${nasaImageBase}/iss035e017702/iss035e017702~medium.jpg`,
-        alt: 'ISS crew member servicing the Multi-User Droplet Combustion Apparatus.',
-        caption: 'MDCA fuel-reservoir service supporting FLEX-2; this is an operations image, not a flame-result image.',
-        credit: 'NASA / NASA Image and Video Library · ISS035-E-017702',
+        alt: 'Tripulante de la EEI realizando mantenimiento al Multi-User Droplet Combustion Apparatus.',
+        caption: 'Mantenimiento de los depósitos de combustible del MDCA para apoyar FLEX-2; es una imagen operativa, no un registro de resultados de llama.',
+        credit: 'NASA / Biblioteca de Imágenes y Videos de NASA · ISS035-E-017702',
         source: 'https://images.nasa.gov/details/iss035e017702'
       }
     ]
   },
   {
     id: 'saffire-i',
-    name: 'Spacecraft Fire Experiment (Saffire-I)',
-    type: 'Large-scale solid-material flammability test',
-    organization: 'NASA Glenn Research Center',
-    domain: 'Spacecraft fire safety',
+    name: 'Experimento de fuego en una nave espacial (Saffire-I)',
+    type: 'Ensayo de inflamabilidad de materiales sólidos a gran escala',
+    organization: 'Centro de Investigación Glenn de la NASA',
+    domain: 'Seguridad contra incendios en naves espaciales',
     year: '2016',
-    dateContext: 'NASA conference papers published in 2016 describe the program; the attached operations document is undated.',
-    location: 'Cygnus cargo vehicle after it unberthed from the International Space Station',
-    background: 'NASA developed Saffire to address knowledge gaps in spacecraft fire safety using material-flammability tests at spacecraft-relevant scales in low gravity.',
-    objective: 'Study large-scale fire growth and low-gravity flammability in a spacecraft-relevant setting, as described in NASA’s Saffire program paper.',
-    methodology: 'The operations document says Saffire-I started after Cygnus unberthing. Its large sample was approximately 0.4 m wide by 0.94 m tall; the experiment ran automatically, with recorded data compressed and downlinked before vehicle re-entry.',
-    equipment: 'Saffire flight unit aboard Cygnus, experiment avionics, imaging/data recording, and spacecraft communications for downlink.',
-    materials: 'A single combustible sample approximately 0.4 m wide by 0.94 m tall; the operations document does not identify its composition.',
-    findings: 'The indexed operations document describes mission sequencing and data handling, not the measured fire outcomes. The linked NASA paper states the research objectives; no outcome is asserted here.',
-    limitations: 'The operations document is a single-page protocol, not a results paper. The NASA photograph below documents ground processing, not an in-flight flame.',
+    dateContext: 'Publicaciones de congresos de NASA de 2016 describen el programa; el documento operativo adjunto no tiene fecha.',
+    location: 'Vehículo de carga Cygnus, después de separarse de la Estación Espacial Internacional',
+    background: 'NASA desarrolló Saffire para abordar vacíos de conocimiento sobre seguridad contra incendios en naves espaciales mediante ensayos de inflamabilidad a escalas pertinentes para una nave y en baja gravedad.',
+    objective: 'Estudiar el crecimiento de incendios a gran escala y la inflamabilidad en baja gravedad dentro de un contexto pertinente para naves espaciales, según la publicación de NASA sobre Saffire.',
+    methodology: 'El documento operativo indica que Saffire-I comenzó después de la separación de Cygnus. La muestra grande medía aproximadamente 0,4 m de ancho por 0,94 m de alto; el experimento se ejecutó automáticamente y los datos registrados se comprimieron y transmitieron antes de la reentrada del vehículo.',
+    equipment: 'Unidad de vuelo Saffire a bordo de Cygnus, aviónica del experimento, captura de imágenes y datos, y comunicaciones de la nave para transmitirlos.',
+    materials: 'Una muestra combustible de aproximadamente 0,4 m de ancho por 0,94 m de alto; el documento operativo no identifica su composición.',
+    findings: 'El documento operativo indexado describe la secuencia de la misión y el manejo de datos, no los resultados medidos del fuego. El artículo vinculado de NASA expone los objetivos de investigación; esta ficha no afirma resultados.',
+    limitations: 'El documento operativo es un protocolo de una página, no un artículo de resultados. La fotografía de NASA que aparece abajo documenta el procesamiento en tierra, no una llama en vuelo.',
     references: [
       {
-        label: 'NASA NTRS · Operation and Development Status of the Saffire Experiments',
+        label: 'Título original de NASA NTRS · Operation and Development Status of the Saffire Experiments',
         url: 'https://ntrs.nasa.gov/citations/20170000230',
-        kind: 'NASA conference paper · published 2016'
+        kind: 'Artículo de congreso de NASA · publicado en 2016'
       },
       {
-        label: 'SAFFIRE-I Operations · locally indexed source',
+        label: 'Operaciones de SAFFIRE-I · fuente indexada localmente',
         url: getDocumentUrl('SAFFIRE-I Operations.pdf'),
-        kind: 'Operational requirements and protocols · 1 page'
+        kind: 'Requisitos operativos y protocolos · 1 página'
       }
     ],
     related: ['bass-ii'],
@@ -115,8 +115,8 @@ const experiments = [
       {
         type: 'image',
         src: `${nasaImageBase}/jsc2016e017570/jsc2016e017570~medium.jpg`,
-        alt: 'Saffire-I hardware documented during the OA-6 Crew Equipment Interface Test.',
-        caption: 'Preflight ground processing at Kennedy Space Center; not an image of the in-flight experiment.',
+        alt: 'Equipo de Saffire-I documentado durante la prueba de interfaz de equipo de tripulación OA-6.',
+        caption: 'Procesamiento en tierra previo al vuelo en el Centro Espacial Kennedy; no es una imagen del experimento en vuelo.',
         credit: 'NASA Johnson Space Center · NASA ID jsc2016e017570',
         source: 'https://images.nasa.gov/details/jsc2016e017570'
       },
@@ -124,7 +124,7 @@ const experiments = [
         type: 'video',
         src: `${nasaVideoBase}/GRC-2021-CN-00008/GRC-2021-CN-00008~preview.mp4`,
         poster: `${nasaVideoBase}/GRC-2021-CN-00008/GRC-2021-CN-00008~large.jpg`,
-        caption: 'Related program footage: a Saffire-V sample burn, not Saffire-I.',
+        caption: 'Material audiovisual relacionado: combustión de una muestra Saffire-V, no de Saffire-I.',
         credit: 'NASA Glenn Research Center · NASA ID GRC-2021-CN-00008',
         source: 'https://images.nasa.gov/details/GRC-2021-CN-00008'
       }
@@ -132,25 +132,25 @@ const experiments = [
   },
   {
     id: 'bass-ii',
-    name: 'Burning and Suppression of Solids-II (BASS-II)',
-    type: 'Solid-fuel burning and extinction experiment',
-    organization: 'NASA Glenn Research Center',
-    domain: 'Solid-material combustion',
+    name: 'Combustión y supresión de sólidos II (BASS-II)',
+    type: 'Experimento de combustión y extinción de combustible sólido',
+    organization: 'Centro de Investigación Glenn de la NASA',
+    domain: 'Combustión de materiales sólidos',
     year: '2021',
-    dateContext: 'NASA summary report published 2021; the abstract does not specify the flight-test year.',
-    location: 'Microgravity Science Glovebox, International Space Station',
-    background: 'BASS-II studied solid-fuel burning in a contained flow duct within the ISS Microgravity Science Glovebox.',
-    objective: 'Characterize burning and extinction of solid samples in microgravity and inform spacecraft material-flammability screening.',
-    methodology: 'NASA describes a contained flow duct, astronaut-operated ignition and fan controls, and video/still imaging. BASS-II varied ambient oxygen concentration, ventilation velocity, and fuel type, thickness, and geometry; onboard sensors recorded O₂, CO, and CO₂.',
-    equipment: 'Microgravity Science Glovebox, BASS flow duct, cameras, CSA-CP gas analyzer, and Carbon Dioxide Monitor.',
-    materials: 'Solid fuels with varied type, thickness, and geometry; the NASA abstract does not enumerate specific materials.',
-    findings: 'The NASA summary reports that pre-/post-test O₂ and CO₂ changes compared well with stoichiometric ratios for a one-step gas-phase reaction. CO versus CO₂ followed a linear trend in some, but not all, tested fuel/flow datasets.',
-    limitations: 'The reported trends were not universal across tested geometries and flows. They are findings from this apparatus and test matrix, not a general spacecraft fire model.',
+    dateContext: 'Informe resumido de NASA publicado en 2021; el resumen no especifica el año de los ensayos en vuelo.',
+    location: 'Microgravity Science Glovebox, Estación Espacial Internacional',
+    background: 'BASS-II estudió la combustión de combustibles sólidos dentro de un conducto de flujo contenido en la Microgravity Science Glovebox de la EEI.',
+    objective: 'Caracterizar la combustión y extinción de muestras sólidas en microgravedad y aportar información a la evaluación de inflamabilidad de materiales para naves espaciales.',
+    methodology: 'NASA describe un conducto de flujo contenido, controles de ignición y ventilador operados por astronautas, y registro de video y fotografías. BASS-II varió la concentración ambiental de oxígeno, la velocidad de ventilación y el tipo, grosor y geometría del combustible; sensores a bordo registraron O₂, CO y CO₂.',
+    equipment: 'Microgravity Science Glovebox, conducto de flujo BASS, cámaras, analizador de gases CSA-CP y monitor de dióxido de carbono.',
+    materials: 'Combustibles sólidos de distintos tipos, grosores y geometrías; el resumen de NASA no enumera materiales específicos.',
+    findings: 'El informe de NASA indica que los cambios de O₂ y CO₂ antes y después de los ensayos concuerdan bien con relaciones estequiométricas de una reacción en fase gaseosa de un solo paso. La relación entre CO y CO₂ siguió una tendencia lineal en algunos conjuntos de datos, pero no en todos.',
+    limitations: 'Las tendencias informadas no fueron universales para todas las geometrías y condiciones de flujo ensayadas. Corresponden a este equipo y matriz de ensayos, no a un modelo general de incendio en naves espaciales.',
     references: [
       {
-        label: 'NASA NTRS · BASS-II Summary Report',
+        label: 'Título original de NASA NTRS · BASS-II Summary Report',
         url: 'https://ntrs.nasa.gov/citations/20210011385',
-        kind: 'Technical memorandum · NASA Glenn Research Center · 2021'
+        kind: 'Memorando técnico · Centro de Investigación Glenn de NASA · 2021'
       }
     ],
     related: ['saffire-i'],
@@ -158,8 +158,8 @@ const experiments = [
       {
         type: 'image',
         src: `${nasaImageBase}/iss040e086481/iss040e086481~medium.jpg`,
-        alt: 'BASS-II flame test session conducted at reduced oxygen partial pressure aboard the ISS.',
-        caption: 'BASS-II flame-test session with reduced oxygen partial pressure; NASA image metadata dates it 2 August 2014.',
+        alt: 'Ensayo de llama BASS-II realizado con presión parcial de oxígeno reducida a bordo de la EEI.',
+        caption: 'Ensayo de llama BASS-II con presión parcial de oxígeno reducida; los metadatos de NASA fechan la imagen el 2 de agosto de 2014.',
         credit: 'NASA / Reid Wiseman · NASA ID iss040e086481',
         source: 'https://images.nasa.gov/details/iss040e086481'
       }
@@ -170,37 +170,37 @@ const experiments = [
 const visualizers = [
   {
     id: 'flame',
-    label: 'Microgravity flame',
-    description: 'Explore how gravity and imposed ventilation define the transport context around a flame.',
-    limitation: 'Arrows encode the selected input values only. Flame geometry is schematic; no flow field or flame response is calculated.',
+    label: 'Llama en microgravedad',
+    description: 'Explora cómo la gravedad y la ventilación impuesta definen el contexto de transporte alrededor de una llama.',
+    limitation: 'Las flechas codifican únicamente los valores de entrada seleccionados. La geometría es esquemática; no se calcula el campo de flujo ni la respuesta de la llama.',
     controls: ['gravity', 'ventilation']
   },
   {
     id: 'droplet',
-    label: 'Droplet combustion',
-    description: 'Inspect the relative geometry of a liquid-fuel droplet and its surrounding conceptual flame zone.',
-    limitation: 'The droplet is drawn to a labeled screen scale. The surrounding ring is illustrative and does not predict burning rate or lifetime.',
+    label: 'Combustión de gotas',
+    description: 'Examina la geometría relativa de una gota de combustible líquido y la zona conceptual de llama que la rodea.',
+    limitation: 'La gota se dibuja con una escala visual indicada. El anillo que la rodea es ilustrativo y no predice la velocidad ni la duración de la combustión.',
     controls: ['diameter']
   },
   {
     id: 'solid',
-    label: 'Solid-material spread',
-    description: 'Change the displayed specimen thickness and inspect a conceptual flame-front arrangement.',
-    limitation: 'The specimen is a diagram, not a material-specific spread calculation; no spread rate is reported.',
+    label: 'Propagación en sólidos',
+    description: 'Cambia el grosor mostrado de la muestra y examina una disposición conceptual del frente de llama.',
+    limitation: 'La muestra es esquemática; no se calcula la propagación para un material específico ni se informa una velocidad.',
     controls: ['thickness']
   },
   {
     id: 'smoke',
-    label: 'Smoke and products',
-    description: 'Explore how an imposed ventilation vector can be represented around a contained combustion source.',
-    limitation: 'Particle paths are decorative streamlines, not computed smoke trajectories, concentrations, or toxic-gas fields.',
+    label: 'Humo y productos',
+    description: 'Explora cómo se representa un vector de ventilación impuesta alrededor de una fuente de combustión contenida.',
+    limitation: 'Las trayectorias de partículas son líneas esquemáticas, no representan trayectorias de humo, concentraciones ni campos de gases tóxicos calculados.',
     controls: ['ventilation', 'direction']
   },
   {
     id: 'extinction',
-    label: 'Extinction context',
-    description: 'Inspect the selected oxidizer fraction and pressure as independent experimental context variables.',
-    limitation: 'No flammability or extinction threshold is plotted. A threshold depends on fuel, geometry, flow, pressure, and test method.',
+    label: 'Contexto de extinción',
+    description: 'Examina la fracción de oxidante y la presión seleccionadas como variables independientes del contexto experimental.',
+    limitation: 'No se representa un umbral de inflamabilidad o extinción. Estos umbrales dependen del combustible, la geometría, el flujo, la presión y el método de ensayo.',
     controls: ['oxygen', 'pressure']
   }
 ]
@@ -255,9 +255,9 @@ function ConceptualVisualization({ visualizer, parameters }) {
             <path className="lab-fuel-source" d="M224 227H292L280 244H236Z" />
             <path className="lab-input-arrow" d={`M360 225V${225 - gravityArrowLength}`} markerEnd="url(#lab-arrow-cyan)" />
             <path className="lab-input-arrow" d={`M${93 + ventilationArrowLength} 92H90`} markerEnd="url(#lab-arrow-cyan)" />
-            <text className="lab-svg-label" x="369" y="80">g input</text>
-            <text className="lab-svg-label" x="92" y="70">ventilation input</text>
-            <text className="lab-svg-subtle" x="258" y="273" textAnchor="middle">flame silhouette fixed · not a predicted response</text>
+            <text className="lab-svg-label" x="369" y="80">entrada g</text>
+            <text className="lab-svg-label" x="92" y="70">entrada de ventilación</text>
+            <text className="lab-svg-subtle" x="258" y="273" textAnchor="middle">silueta fija · no es una respuesta predicha</text>
           </>
         )}
 
@@ -266,7 +266,7 @@ function ConceptualVisualization({ visualizer, parameters }) {
             <circle className="lab-droplet-zone" cx="260" cy="150" r={dropletRadius + 37} />
             <circle className="lab-droplet" cx="260" cy="150" r={dropletRadius} />
             <path className="lab-dimension-line" d={`M${260 - dropletRadius} ${150 + dropletRadius + 23}H${260 + dropletRadius}`} />
-            <text className="lab-svg-label" x="260" y="265" textAnchor="middle">droplet diameter · visual scale 13 px/mm</text>
+            <text className="lab-svg-label" x="260" y="265" textAnchor="middle">diámetro de gota · escala visual 13 px/mm</text>
           </>
         )}
 
@@ -275,8 +275,8 @@ function ConceptualVisualization({ visualizer, parameters }) {
             <rect className="lab-specimen" x="88" y={180 - sampleThickness} width="344" height={sampleThickness} rx="3" />
             <path className="lab-flame-halo" d="M257 178C227 153 240 127 252 108C265 88 257 73 255 62C287 88 302 120 291 148C284 164 271 174 257 178Z" fill="url(#lab-flame-gradient)" />
             <path className="lab-dimension-line" d={`M449 ${180 - sampleThickness}V180`} />
-            <text className="lab-svg-label" x="260" y="235" textAnchor="middle">schematic solid sample</text>
-            <text className="lab-svg-subtle" x="260" y="257" textAnchor="middle">front location is illustrative, not a spread result</text>
+            <text className="lab-svg-label" x="260" y="235" textAnchor="middle">muestra sólida esquemática</text>
+            <text className="lab-svg-subtle" x="260" y="257" textAnchor="middle">frente ilustrativo, no es un resultado de propagación</text>
           </>
         )}
 
@@ -295,8 +295,8 @@ function ConceptualVisualization({ visualizer, parameters }) {
                 : `M420 180V${180 - ventilationArrowLength}`}
               markerEnd="url(#lab-arrow-cyan)"
             />
-            <text className="lab-svg-label" x="416" y="45" textAnchor="end">imposed ventilation</text>
-            <text className="lab-svg-subtle" x="260" y="265" textAnchor="middle">illustrative paths · no concentration field</text>
+            <text className="lab-svg-label" x="416" y="45" textAnchor="end">ventilación impuesta</text>
+            <text className="lab-svg-subtle" x="260" y="265" textAnchor="middle">trayectorias ilustrativas · sin campo de concentración</text>
           </>
         )}
 
@@ -304,11 +304,11 @@ function ConceptualVisualization({ visualizer, parameters }) {
           <>
             <rect className="lab-chamber" x="68" y="56" width="384" height="157" rx="12" />
             <path className="lab-flame-halo" d="M260 184C235 164 245 137 257 121C268 105 260 91 258 81C286 103 298 130 289 154C283 168 272 179 260 184Z" fill="url(#lab-flame-gradient)" />
-            <text className="lab-svg-label" x="260" y="238" textAnchor="middle">flame symbol remains unchanged</text>
-            <text className="lab-svg-subtle" x="260" y="260" textAnchor="middle">no threshold or extinction prediction is loaded</text>
+            <text className="lab-svg-label" x="260" y="238" textAnchor="middle">el símbolo de llama no cambia</text>
+            <text className="lab-svg-subtle" x="260" y="260" textAnchor="middle">no se calcula un umbral ni se predice la extinción</text>
             <path className="lab-gauge-track" d="M115 91H405" />
             <path className="lab-gauge-marker" d={`M${115 + oxygenPosition * 2.9} 81V101`} />
-            <text className="lab-svg-subtle" x="115" y="75">oxidizer input range: 12–24 % vol</text>
+            <text className="lab-svg-subtle" x="115" y="75">rango de entrada de oxidante: 12–24 % vol</text>
           </>
         )}
       </svg>
@@ -321,92 +321,92 @@ function SimulationControls({ visualizer, parameters, onChange }) {
     gravity: (
       <ParameterSlider
         key="gravity"
-        label="Gravitational acceleration"
+        label="Aceleración gravitatoria"
         value={parameters.gravity}
         min={0}
         max={9.81}
         step={0.1}
         unit="m/s²"
         onChange={(value) => onChange('gravity', value)}
-        help="Reference range: 0 to standard Earth gravity."
+        help="Rango de referencia: de 0 a la gravedad terrestre estándar."
       />
     ),
     ventilation: (
       <ParameterSlider
         key="ventilation"
-        label="Imposed ventilation speed"
+        label="Velocidad de ventilación impuesta"
         value={parameters.ventilation}
         min={0}
         max={0.5}
         step={0.01}
         unit="m/s"
         onChange={(value) => onChange('ventilation', value)}
-        help="The diagram scales an arrow to this input; it does not calculate flow."
+        help="El diagrama ajusta una flecha a este valor; no calcula el flujo."
       />
     ),
     diameter: (
       <ParameterSlider
         key="diameter"
-        label="Droplet diameter"
+        label="Diámetro de la gota"
         value={parameters.diameter}
         min={0.5}
         max={5}
         step={0.1}
         unit="mm"
         onChange={(value) => onChange('diameter', value)}
-        help="Screen circle uses a fixed visual scale, not apparatus dimensions."
+        help="El círculo usa una escala visual fija, no las dimensiones del equipo."
       />
     ),
     thickness: (
       <ParameterSlider
         key="thickness"
-        label="Displayed specimen thickness"
+        label="Grosor mostrado de la muestra"
         value={parameters.thickness}
         min={1}
         max={10}
         step={0.5}
         unit="mm"
         onChange={(value) => onChange('thickness', value)}
-        help="Only the specimen outline changes; no material response is computed."
+        help="Solo cambia el contorno de la muestra; no se calcula la respuesta del material."
       />
     ),
     direction: (
       <label className="lab-parameter">
-        <span className="lab-parameter-heading"><span>Ventilation orientation</span></span>
+        <span className="lab-parameter-heading"><span>Orientación de la ventilación</span></span>
         <select
           value={parameters.direction}
           onChange={(event) => onChange('direction', event.target.value)}
-          aria-label="Ventilation orientation"
+          aria-label="Orientación de la ventilación"
         >
-          <option value="axial">Axial · horizontal diagram</option>
-          <option value="transverse">Transverse · vertical diagram</option>
+          <option value="axial">Axial · diagrama horizontal</option>
+          <option value="transverse">Transversal · diagrama vertical</option>
         </select>
       </label>
     ),
     oxygen: (
       <ParameterSlider
         key="oxygen"
-        label="Oxidizer fraction"
+        label="Fracción de oxidante"
         value={parameters.oxygen}
         min={12}
         max={24}
         step={0.1}
         unit="% vol"
         onChange={(value) => onChange('oxygen', value)}
-        help="Shown as an input coordinate only; no flammability limit is assumed."
+        help="Se muestra únicamente como entrada; no se supone un límite de inflamabilidad."
       />
     ),
     pressure: (
       <ParameterSlider
         key="pressure"
-        label="Ambient pressure"
+        label="Presión ambiental"
         value={parameters.pressure}
         min={70}
         max={110}
         step={1}
         unit="kPa"
         onChange={(value) => onChange('pressure', value)}
-        help="Context variable only; no pressure-dependent threshold is calculated."
+        help="Solo es una variable de contexto; no se calcula un umbral dependiente de la presión."
       />
     )
   }
@@ -436,17 +436,17 @@ function LegacySimulationLab() {
     <section className="lab-simulations" aria-labelledby="lab-simulations-heading">
       <div className="lab-section-heading">
         <div>
-          <span className="panel-kicker">INTERACTIVE CONCEPT MODELS</span>
-          <h3 id="lab-simulations-heading">Explore the variables, not invented outcomes</h3>
+          <span className="panel-kicker">MODELOS CONCEPTUALES INTERACTIVOS</span>
+          <h3 id="lab-simulations-heading">Explora las variables, no resultados inventados</h3>
         </div>
-        <span className="lab-status-badge"><SlidersHorizontal size={13} /> CONCEPTUAL · NOT VALIDATED</span>
+        <span className="lab-status-badge"><SlidersHorizontal size={13} /> CONCEPTUAL · NO VALIDADO</span>
       </div>
       <p className="lab-section-intro">
-        Each control updates a diagram or displays a selected condition. These visualizations are not numerical
-        simulations and do not report measured experimental data.
+        Cada control actualiza un diagrama o muestra una condición seleccionada. Estas visualizaciones no son
+        simulaciones numéricas ni presentan datos experimentales medidos.
       </p>
 
-      <div className="lab-simulation-tabs" role="tablist" aria-label="Conceptual combustion visualizations">
+      <div className="lab-simulation-tabs" role="tablist" aria-label="Visualizaciones conceptuales de combustión">
         {visualizers.map((item) => (
           <button
             type="button"
@@ -471,7 +471,7 @@ function LegacySimulationLab() {
       >
         <div className="lab-simulation-copy">
           <span className="lab-simulation-number">
-            {String(activeIndex + 1).padStart(2, '0')} / 05 · CONCEPT VIEW
+            {String(activeIndex + 1).padStart(2, '0')} / 05 · VISTA CONCEPTUAL
           </span>
           <h4>{active.label}</h4>
           <p>{active.description}</p>
@@ -492,11 +492,11 @@ function LegacySimulationLab() {
 function SimulationLab({ onOpenExperiment }) {
   return (
     <>
-      <React.Suspense fallback={<div className="lab-simulation-loading" role="status">Loading the 3D simulation engine...</div>}>
+      <React.Suspense fallback={<div className="lab-simulation-loading" role="status">Cargando el motor de visualización 3D...</div>}>
         <ExperimentSimulator3D onOpenExperiment={onOpenExperiment} />
       </React.Suspense>
       <details className="lab-2d-reference">
-        <summary>Open compact 2D conceptual references</summary>
+        <summary>Abrir las referencias conceptuales 2D compactas</summary>
         <LegacySimulationLab />
       </details>
     </>
@@ -508,7 +508,7 @@ function ExperimentCard({ experiment, selected, onOpen, onCompare }) {
     <article className="lab-experiment-card">
       <div className="lab-card-topline">
         <span>{experiment.domain}</span>
-        <span className="lab-year">{experiment.year} · source year</span>
+        <span className="lab-year">{experiment.year} · año de la fuente</span>
       </div>
       <h3>{experiment.name}</h3>
       <span className="lab-experiment-type">{experiment.type}</span>
@@ -519,7 +519,7 @@ function ExperimentCard({ experiment, selected, onOpen, onCompare }) {
       </div>
       <div className="lab-card-actions">
         <button type="button" className="lab-open-button" onClick={onOpen}>
-          Open experiment <ArrowRight size={14} />
+          Abrir experimento <ArrowRight size={14} />
         </button>
         <button
           type="button"
@@ -528,7 +528,7 @@ function ExperimentCard({ experiment, selected, onOpen, onCompare }) {
           aria-pressed={selected}
         >
           {selected ? <Check size={14} /> : <SlidersHorizontal size={14} />}
-          {selected ? 'In comparison' : 'Compare'}
+          {selected ? 'En comparación' : 'Comparar'}
         </button>
       </div>
     </article>
@@ -571,7 +571,7 @@ function ExperimentArchive({ onOpen }) {
         return current.filter((item) => item !== id)
       }
       if (current.length >= 2) {
-        setCompareMessage('Compare up to two experiments. Remove one selection before adding another.')
+        setCompareMessage('Puedes comparar hasta dos experimentos. Quita una selección antes de añadir otra.')
         return current
       }
       setCompareMessage('')
@@ -583,14 +583,14 @@ function ExperimentArchive({ onOpen }) {
     <section className="lab-archive" aria-labelledby="lab-archive-heading">
       <div className="lab-section-heading">
         <div>
-          <span className="panel-kicker">SOURCE-VERIFIED RECORDS</span>
-          <h3 id="lab-archive-heading">Real experiments and operational evidence</h3>
+          <span className="panel-kicker">REGISTROS VERIFICADOS EN LAS FUENTES</span>
+          <h3 id="lab-archive-heading">Experimentos reales y evidencia operativa</h3>
         </div>
-        <span className="lab-record-count">{filtered.length} / {experiments.length} RECORDS</span>
+        <span className="lab-record-count">{filtered.length} / {experiments.length} REGISTROS</span>
       </div>
       <p className="lab-section-intro">
-        Dates and findings below are limited to what the linked NASA records document. A source publication year
-        is not presented as an experiment date.
+        Las fechas y los hallazgos se limitan a lo documentado en los registros vinculados de NASA. El año de
+        publicación de una fuente no se presenta como fecha del experimento.
       </p>
 
       <div className="lab-discovery-toolbar">
@@ -600,35 +600,35 @@ function ExperimentArchive({ onOpen }) {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search name, topic, objective..."
-            aria-label="Search the experiment archive"
+            placeholder="Buscar por nombre, tema u objetivo..."
+            aria-label="Buscar en el archivo de experimentos"
           />
         </label>
         <label className="lab-filter">
-          <span>EXPERIMENT TYPE</span>
-          <select value={type} onChange={(event) => setType(event.target.value)} aria-label="Filter by experiment type">
-            <option value="all">All experiment types</option>
+          <span>TIPO DE EXPERIMENTO</span>
+          <select value={type} onChange={(event) => setType(event.target.value)} aria-label="Filtrar por tipo de experimento">
+            <option value="all">Todos los tipos de experimento</option>
             {types.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
         </label>
         <label className="lab-filter">
-          <span>RESEARCH DOMAIN</span>
-          <select value={domain} onChange={(event) => setDomain(event.target.value)} aria-label="Filter by research domain">
-            <option value="all">All research domains</option>
+          <span>ÁREA DE INVESTIGACIÓN</span>
+          <select value={domain} onChange={(event) => setDomain(event.target.value)} aria-label="Filtrar por área de investigación">
+            <option value="all">Todas las áreas de investigación</option>
             {domains.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
         </label>
         <label className="lab-filter">
-          <span>ORGANIZATION</span>
-          <select value={organization} onChange={(event) => setOrganization(event.target.value)} aria-label="Filter by organization">
-            <option value="all">All organizations</option>
+          <span>ORGANIZACIÓN</span>
+          <select value={organization} onChange={(event) => setOrganization(event.target.value)} aria-label="Filtrar por organización">
+            <option value="all">Todas las organizaciones</option>
             {organizations.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
         </label>
         <label className="lab-filter">
-          <span>SOURCE YEAR</span>
-          <select value={year} onChange={(event) => setYear(event.target.value)} aria-label="Filter by source year">
-            <option value="all">All source years</option>
+          <span>AÑO DE LA FUENTE</span>
+          <select value={year} onChange={(event) => setYear(event.target.value)} aria-label="Filtrar por año de la fuente">
+            <option value="all">Todos los años de las fuentes</option>
             {years.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
         </label>
@@ -651,8 +651,8 @@ function ExperimentArchive({ onOpen }) {
       ) : (
         <div className="lab-empty-state">
           <Search size={22} />
-          <h4>No experiments match these filters</h4>
-          <p>Try a broader term or clear one of the filters.</p>
+          <h4>Ningún experimento coincide con estos filtros</h4>
+          <p>Prueba con un término más general o quita alguno de los filtros.</p>
         </div>
       )}
 
@@ -660,29 +660,29 @@ function ExperimentArchive({ onOpen }) {
         <section className="lab-comparison" aria-labelledby="lab-comparison-heading">
           <div className="lab-comparison-heading">
             <div>
-              <span className="panel-kicker">SIDE-BY-SIDE</span>
-              <h4 id="lab-comparison-heading">Experiment comparison</h4>
+              <span className="panel-kicker">COMPARACIÓN LADO A LADO</span>
+              <h4 id="lab-comparison-heading">Comparación de experimentos</h4>
             </div>
-            <button type="button" onClick={() => setComparisonIds([])}>Clear comparison</button>
+            <button type="button" onClick={() => setComparisonIds([])}>Borrar comparación</button>
           </div>
           <div
             className="lab-comparison-table"
             role="table"
-            aria-label="Selected experiments compared by metadata"
+            aria-label="Comparación de metadatos de los experimentos seleccionados"
             style={{ '--comparison-columns': compared.length }}
           >
             <div className="lab-comparison-row lab-comparison-labels" role="row">
-              <span role="columnheader">Property</span>
+              <span role="columnheader">Propiedad</span>
               {compared.map((item) => <strong key={item.id} role="columnheader">{item.name}</strong>)}
             </div>
             {[
-              ['Experiment type', 'type'],
-              ['Research domain', 'domain'],
-              ['Organization', 'organization'],
-              ['Source year context', 'dateContext'],
-              ['Location', 'location'],
-              ['Method', 'methodology'],
-              ['Evidence in this record', 'findings']
+              ['Tipo de experimento', 'type'],
+              ['Área de investigación', 'domain'],
+              ['Organización', 'organization'],
+              ['Contexto de fecha de la fuente', 'dateContext'],
+              ['Ubicación', 'location'],
+              ['Método', 'methodology'],
+              ['Evidencia en este registro', 'findings']
             ].map(([label, key]) => (
               <div className="lab-comparison-row" role="row" key={key}>
                 <span role="rowheader">{label}</span>
@@ -704,28 +704,28 @@ function ExperimentDetail({ experiment, onBack, onOpenRelated }) {
   return (
     <section className="lab-detail" aria-labelledby="lab-detail-title">
       <button type="button" className="lab-back-button" onClick={onBack}>
-        <ArrowLeft size={15} /> Back to archive
+        <ArrowLeft size={15} /> Volver al archivo
       </button>
       <header className="lab-detail-header">
         <div className="lab-card-topline">
           <span>{experiment.domain}</span>
-          <span className="lab-year">{experiment.year} · source year</span>
+          <span className="lab-year">{experiment.year} · año de la fuente</span>
         </div>
         <h3 id="lab-detail-title">{experiment.name}</h3>
         <p>{experiment.objective}</p>
         <div className="lab-detail-meta">
-          <span><strong>Organization</strong>{experiment.organization}</span>
-          <span><strong>Experiment type</strong>{experiment.type}</span>
-          <span><strong>Date context</strong>{experiment.dateContext}</span>
-          <span><strong>Location</strong>{experiment.location}</span>
+          <span><strong>Organización</strong>{experiment.organization}</span>
+          <span><strong>Tipo de experimento</strong>{experiment.type}</span>
+          <span><strong>Contexto de fecha</strong>{experiment.dateContext}</span>
+          <span><strong>Ubicación</strong>{experiment.location}</span>
         </div>
       </header>
 
       <section className="lab-detail-section">
         <div className="lab-section-heading">
           <div>
-            <span className="panel-kicker">ORIGINAL SOURCE MATERIAL</span>
-            <h4>Images and video</h4>
+            <span className="panel-kicker">MATERIAL DE LA FUENTE ORIGINAL</span>
+            <h4>Imágenes y videos</h4>
           </div>
         </div>
         {experiment.media.length ? (
@@ -735,7 +735,7 @@ function ExperimentDetail({ experiment, onBack, onOpenRelated }) {
                 {item.type === 'video' ? (
                   <video controls preload="metadata" poster={item.poster}>
                     <source src={item.src} type="video/mp4" />
-                    Your browser does not support embedded video. Open the NASA source record instead.
+                    Tu navegador no admite video integrado. Abre el registro original de NASA.
                   </video>
                 ) : (
                   <a href={item.source} target="_blank" rel="noreferrer" className="lab-media-image-link">
@@ -745,9 +745,9 @@ function ExperimentDetail({ experiment, onBack, onOpenRelated }) {
                 <figcaption>
                   <span>{item.caption}</span>
                   <small>{item.credit}</small>
-                  <small>Usage rights: consult the original NASA record; this interface does not infer a separate license.</small>
+                  <small>Derechos de uso: consulta el registro original de NASA; esta interfaz no atribuye una licencia independiente.</small>
                   <a href={item.source} target="_blank" rel="noreferrer">
-                    Open original NASA media <ExternalLink size={12} />
+                    Abrir material multimedia original de NASA <ExternalLink size={12} />
                   </a>
                 </figcaption>
               </figure>
@@ -756,32 +756,32 @@ function ExperimentDetail({ experiment, onBack, onOpenRelated }) {
         ) : (
           <div className="lab-no-media">
             <FileText size={18} />
-            <p>No original media was verified for this record. The linked NASA publication is the primary source.</p>
+            <p>No se verificó material multimedia original para este registro. La publicación de NASA vinculada es la fuente primaria.</p>
           </div>
         )}
       </section>
 
       <div className="lab-detail-grid">
         <article className="lab-detail-section">
-          <span className="panel-kicker">SCIENTIFIC BACKGROUND</span>
-          <h4>Research context</h4>
+          <span className="panel-kicker">CONTEXTO CIENTÍFICO</span>
+          <h4>Contexto de la investigación</h4>
           <p>{experiment.background}</p>
         </article>
         <article className="lab-detail-section">
-          <span className="panel-kicker">METHOD</span>
-          <h4>Methodology, equipment, and materials</h4>
+          <span className="panel-kicker">MÉTODO</span>
+          <h4>Metodología, equipo y materiales</h4>
           <p>{experiment.methodology}</p>
-          <p className="lab-equipment"><strong>Equipment:</strong> {experiment.equipment}</p>
-          <p className="lab-equipment"><strong>Materials:</strong> {experiment.materials}</p>
+          <p className="lab-equipment"><strong>Equipo:</strong> {experiment.equipment}</p>
+          <p className="lab-equipment"><strong>Materiales:</strong> {experiment.materials}</p>
         </article>
         <article className="lab-detail-section">
-          <span className="panel-kicker">EVIDENCE</span>
-          <h4>Observations and findings</h4>
+          <span className="panel-kicker">EVIDENCIA</span>
+          <h4>Observaciones y hallazgos</h4>
           <p>{experiment.findings}</p>
         </article>
         <article className="lab-detail-section lab-limitation-section">
-          <span className="panel-kicker">SCOPE AND LIMITATIONS</span>
-          <h4>What this record does not establish</h4>
+          <span className="panel-kicker">ALCANCE Y LIMITACIONES</span>
+          <h4>Qué no establece este registro</h4>
           <p>{experiment.limitations}</p>
         </article>
       </div>
@@ -789,8 +789,8 @@ function ExperimentDetail({ experiment, onBack, onOpenRelated }) {
       <section className="lab-detail-section lab-references">
         <div className="lab-section-heading">
           <div>
-            <span className="panel-kicker">TRACEABLE REFERENCES</span>
-            <h4>Publications and original sources</h4>
+            <span className="panel-kicker">REFERENCIAS TRAZABLES</span>
+            <h4>Publicaciones y fuentes originales</h4>
           </div>
           <BookOpen size={19} />
         </div>
@@ -804,12 +804,12 @@ function ExperimentDetail({ experiment, onBack, onOpenRelated }) {
 
       {relatedExperiments.length > 0 && (
         <section className="lab-detail-section lab-related-experiments">
-          <span className="panel-kicker">RELATED RECORDS</span>
-          <h4>Related experiments</h4>
+          <span className="panel-kicker">REGISTROS RELACIONADOS</span>
+          <h4>Experimentos relacionados</h4>
           <div className="lab-related-experiment-list">
             {relatedExperiments.map((item) => (
               <button type="button" key={item.id} onClick={() => onOpenRelated(item.id)}>
-                <span><strong>{item.name}</strong><small>{item.type} · {item.year} source year</small></span>
+                <span><strong>{item.name}</strong><small>{item.type} · fuente de {item.year}</small></span>
                 <ArrowRight size={14} />
               </button>
             ))}
@@ -817,11 +817,11 @@ function ExperimentDetail({ experiment, onBack, onOpenRelated }) {
         </section>
       )}
 
-      <nav className="lab-related-links" aria-label="Related IGNIS modules">
-        <a href="#experiments-lab"><Flame size={15} /> Explore conceptual models</a>
-        <a href="#research"><BookOpen size={15} /> Research Intelligence</a>
-        <a href="#combustion"><Wind size={15} /> Combustion Explorer</a>
-        <a href="#assistant"><Search size={15} /> Ask IGNIS AI</a>
+      <nav className="lab-related-links" aria-label="Módulos de IGNIS relacionados">
+        <a href="#experiments-lab"><Flame size={15} /> Explorar modelos conceptuales</a>
+        <a href="#research"><BookOpen size={15} /> Inteligencia de investigación</a>
+        <a href="#combustion"><Wind size={15} /> Explorador de combustión</a>
+        <a href="#assistant"><Search size={15} /> Consultar a IGNIS IA</a>
       </nav>
     </section>
   )
@@ -835,18 +835,19 @@ export default function ExperimentsLab() {
   return (
     <section className="module-page experiments-lab">
       <header className="module-page-header lab-page-header">
-        <div className="eyebrow"><span className="status-dot" /> EXPERIMENTS LAB · EVIDENCE AND MODELS</div>
-        <h2>Explore the experiment behind the evidence</h2>
+        <div className="eyebrow"><span className="status-dot" /> LABORATORIO DE EXPERIMENTOS · EVIDENCIA Y MODELOS</div>
+        <h2>Explora los experimentos detrás de la evidencia</h2>
         <p>
-          Interactive conceptual views alongside documented NASA combustion and spacecraft fire-safety
-          experiments. Source records, mission context, and model limitations stay visible throughout.
+          Visualizaciones conceptuales interactivas junto con experimentos documentados por NASA sobre combustión
+          y seguridad contra incendios en naves espaciales. Las fuentes, el contexto de la misión y las limitaciones
+          del modelo permanecen visibles.
         </p>
       </header>
 
-      <nav className="experience-links lab-experience-links" aria-label="Connected IGNIS experiences">
-        <a href="#digital-twin"><Wind size={14} /> Explore the habitat digital twin <ArrowRight size={13} /></a>
-        <a href="#microgravity-lab"><Flame size={14} /> Compare Earth & microgravity <ArrowRight size={13} /></a>
-        <a href="#assistant"><Search size={14} /> Investigate with IGNIS AI <ArrowRight size={13} /></a>
+      <nav className="experience-links lab-experience-links" aria-label="Experiencias de IGNIS conectadas">
+        <a href="#digital-twin"><Wind size={14} /> Explorar el gemelo digital del hábitat <ArrowRight size={13} /></a>
+        <a href="#microgravity-lab"><Flame size={14} /> Comparar la Tierra y la microgravedad <ArrowRight size={13} /></a>
+        <a href="#assistant"><Search size={14} /> Investigar con IGNIS IA <ArrowRight size={13} /></a>
       </nav>
 
       {activeExperiment ? (
@@ -857,7 +858,7 @@ export default function ExperimentsLab() {
         />
       ) : (
         <>
-          <div className="lab-workspace-tabs" role="tablist" aria-label="Experiments Lab workspace">
+          <div className="lab-workspace-tabs" role="tablist" aria-label="Espacio de trabajo del laboratorio de experimentos">
             <button
               type="button"
               role="tab"
@@ -865,7 +866,7 @@ export default function ExperimentsLab() {
               className={tab === 'simulations' ? 'selected' : ''}
               onClick={() => setTab('simulations')}
             >
-              <SlidersHorizontal size={15} /> Interactive visualizations
+              <SlidersHorizontal size={15} /> Visualizaciones interactivas
             </button>
             <button
               type="button"
@@ -874,7 +875,7 @@ export default function ExperimentsLab() {
               className={tab === 'archive' ? 'selected' : ''}
               onClick={() => setTab('archive')}
             >
-              <FileText size={15} /> Real experiment archive
+              <FileText size={15} /> Archivo de experimentos reales
             </button>
           </div>
           {tab === 'simulations' ? (
@@ -885,9 +886,9 @@ export default function ExperimentsLab() {
           <div className="lab-integrity-note">
             <Flame size={16} />
             <p>
-              <strong>Scientific integrity:</strong> archive statements link to their source records.
-              3D scenes are conceptual or simplified mathematical models, not experimentally validated simulations;
-              model curves are not experimental measurements.
+              <strong>Integridad científica:</strong> las afirmaciones del archivo enlazan con sus fuentes.
+              Las escenas 3D son modelos conceptuales o matemáticos simplificados, no simulaciones validadas
+              experimentalmente; las curvas del modelo no son mediciones experimentales.
             </p>
           </div>
         </>

@@ -20,10 +20,10 @@ export default function ExperimentModelChart({
   compareDefault
 }) {
   return (
-    <section className="lab-model-chart" aria-label={`${graph.title} versus time`}>
+    <section className="lab-model-chart" aria-label={`${graph.title} en función del tiempo`}>
       <div className="lab-chart-heading">
         <div>
-          <span className="panel-kicker">MODEL OUTPUT · NOT EXPERIMENTAL DATA</span>
+          <span className="panel-kicker">RESULTADO DEL MODELO · NO SON DATOS EXPERIMENTALES</span>
           <h4>{graph.title}</h4>
         </div>
         <strong>{currentValue.toFixed(id === 'droplet' || id === 'solid' ? 2 : 3)} {graph.unit}</strong>
@@ -39,7 +39,7 @@ export default function ExperimentModelChart({
               tickFormatter={(value) => Number(value).toPrecision(2)}
               stroke="#8293a8"
               tick={{ fontSize: 9 }}
-              label={{ value: 'Time (s)', position: 'insideBottom', offset: -2, fill: '#91a0b3', fontSize: 10 }}
+              label={{ value: 'Tiempo (s)', position: 'insideBottom', offset: -2, fill: '#91a0b3', fontSize: 10 }}
             />
             <YAxis
               stroke="#8293a8"
@@ -59,13 +59,13 @@ export default function ExperimentModelChart({
               x={elapsedSeconds}
               stroke="#ffd08a"
               strokeDasharray="3 4"
-              label={{ value: 'time', fill: '#ffd08a', fontSize: 8, position: 'insideTopRight' }}
+              label={{ value: 'tiempo', fill: '#ffd08a', fontSize: 8, position: 'insideTopRight' }}
             />
             {compareDefault && <Legend wrapperStyle={{ fontSize: 9, color: '#b8c5d5' }} />}
             <Line
               type="monotone"
               dataKey="current"
-              name="Current parameters"
+              name="Parámetros actuales"
               stroke="#ff9a5c"
               strokeWidth={2.2}
               dot={false}
@@ -75,7 +75,7 @@ export default function ExperimentModelChart({
               <Line
                 type="monotone"
                 dataKey="reference"
-                name="Default baseline"
+                name="Referencia predeterminada"
                 stroke="#35cddd"
                 strokeWidth={1.6}
                 strokeDasharray="5 4"

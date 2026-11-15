@@ -62,13 +62,6 @@ SOURCE_FILTERS = (
         "1-s2.0-S1540748922000414-am.pdf",
     ),
 )
-SPANISH_TERMS = re.compile(
-    r"[¿¡áéíóúñ]|\b(?:hola|gracias|cómo|qué|cuál|dónde|"
-    r"puedes|tienes|estás|dime|explica|busco|necesito)\b",
-    re.IGNORECASE,
-)
-
-
 def is_research_question(question: str) -> bool:
     """Identifica consultas sobre el tema y la biblioteca de IGNIS."""
 
@@ -87,15 +80,10 @@ def _source_filter(question: str) -> str | None:
     return None
 
 
-def _insufficient_evidence_message(question: str) -> str:
-    if SPANISH_TERMS.search(question):
-        return (
-            "No encontré evidencia suficiente en los documentos indexados "
-            "para responder con confianza."
-        )
+def _insufficient_evidence_message() -> str:
     return (
-        "I couldn't find enough evidence in the indexed documents to answer "
-        "confidently."
+        "No encontré evidencia suficiente en los documentos indexados "
+        "para responder con confianza."
     )
 
 
@@ -169,10 +157,10 @@ def _extractive_research_answer(
     if len(covered_terms) / len(question_terms) < 0.75:
         return None
 
-    if SPANISH_TERMS.search(question):
-        introduction = "Fragmentos textuales relevantes de los documentos:"
-    else:
-        introduction = "Relevant verbatim excerpts from the indexed documents:"
+    introduction = (
+        "Fragmentos textuales originales pertinentes de los documentos "
+        "(se conserva el idioma de la fuente):"
+    )
 
     quotes = [
         f'- "{item["sentence"]}" [[{item["source_index"]}]]'
@@ -184,10 +172,11 @@ def _extractive_research_answer(
 def _general_response(question: str) -> dict:
     prompt = f"""
 You are IGNIS, a friendly conversational assistant.
-Answer casual conversation and general questions directly in the same
-language as the user, using general knowledge rather than claiming that
-the answer comes from IGNIS's research collection.
-Be concise, distinguish uncertainty from fact, and say when you do not know.
+Always answer in Spanish, regardless of the language used in the question.
+Answer casual conversation and general questions directly in Spanish, using
+general knowledge rather than claiming that the answer comes from IGNIS's
+research collection.
+Be concise, distinguish uncertainty from fact, and say in Spanish when you do not know.
 Do not invent personal experiences or claim to have feelings.
 
 USER:
@@ -222,7 +211,7 @@ def answer_question(question: str) -> dict:
 
     if not documents or not has_relevant_evidence(question, documents):
         return {
-            "answer": _insufficient_evidence_message(question),
+            "answer": _insufficient_evidence_message(),
             "sources": [],
             "evidence": [],
             "insufficient_evidence": True,
@@ -248,7 +237,7 @@ def answer_question(question: str) -> dict:
     answer = _extractive_research_answer(question, documents)
     if answer is None:
         return {
-            "answer": _insufficient_evidence_message(question),
+            "answer": _insufficient_evidence_message(),
             "sources": sources,
             "evidence": evidence,
             "insufficient_evidence": True,

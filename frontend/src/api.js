@@ -3,7 +3,13 @@ const API_BASE_URL = (
 ).replace(/\/$/, '')
 
 async function requestJson(path, options = {}) {
-  const response = await fetch(`${API_BASE_URL}${path}`, options)
+  let response
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, options)
+  } catch (error) {
+    if (error.name === 'AbortError') throw error
+    throw new Error('No se pudo conectar con el servicio local de IGNIS.', { cause: error })
+  }
   let payload
 
   try {

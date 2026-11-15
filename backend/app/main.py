@@ -32,8 +32,8 @@ DOCUMENTS_DIR = Path(os.getenv(
 )).expanduser()
 
 app = FastAPI(
-    title="Flame in Freefall",
-    description="Scientific exploration of combustion in microgravity",
+    title="IGNIS · Llama en microgravedad",
+    description="Exploración científica de la combustión en microgravedad",
     version="1.0.0"
 )
 
@@ -63,9 +63,9 @@ class ChatRequest(BaseModel):
 @app.get("/")
 async def root():
     return {
-        "project": "Flame in Freefall",
+        "project": "IGNIS · Llama en microgravedad",
         "status": "operational",
-        "message": "Welcome to Flame in Freefall!"
+        "message": "Bienvenido a IGNIS."
     }
 
 
@@ -90,7 +90,7 @@ def get_model_status() -> dict:
                 "available": False,
                 "provider": "OpenAI-compatible",
                 "model": MODEL,
-                "error": "LLM_BASE_URL and LLM_API_KEY must be configured.",
+                "error": "Debes configurar LLM_BASE_URL y LLM_API_KEY.",
             }
         status_url = f"{LLM_BASE_URL}/models"
         headers = {"Authorization": f"Bearer {LLM_API_KEY}"}
@@ -101,7 +101,7 @@ def get_model_status() -> dict:
             "available": False,
             "provider": LLM_PROVIDER,
             "model": MODEL,
-            "error": f"Unsupported LLM_PROVIDER: {LLM_PROVIDER}",
+            "error": f"Proveedor LLM_PROVIDER no compatible: {LLM_PROVIDER}",
         }
 
     request = Request(status_url, headers=headers)
@@ -109,20 +109,22 @@ def get_model_status() -> dict:
         with urlopen(request, timeout=8) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except (URLError, TimeoutError, OSError) as error:
+        logger.warning("No se pudo consultar el proveedor de inferencia: %s", error)
         return {
             "status": "offline",
             "available": False,
             "provider": provider,
             "model": MODEL,
-            "error": str(error),
+            "error": "No se pudo conectar con el proveedor de inferencia.",
         }
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        logger.warning("El proveedor de inferencia devolvió una respuesta no válida: %s", error)
         return {
             "status": "error",
             "available": False,
             "provider": provider,
             "model": MODEL,
-            "error": f"Invalid inference provider response: {error}",
+            "error": "El proveedor de inferencia devolvió una respuesta no válida.",
         }
 
     model_items = payload.get(
@@ -140,7 +142,7 @@ def get_model_status() -> dict:
         "available": available,
         "provider": provider,
         "model": MODEL,
-        "error": None if available else f"Model {MODEL} is not available.",
+        "error": None if available else f"El modelo {MODEL} no está disponible.",
     }
 
 
@@ -149,7 +151,7 @@ def get_system_status():
     collection = get_collection()
     metadatas = collection.get(include=["metadatas"])["metadatas"] or []
     sources = {
-        metadata.get("source", "Unknown")
+        metadata.get("source", "Fuente sin identificar")
         for metadata in metadatas
     }
     ai_status = get_model_status()
@@ -177,7 +179,7 @@ def get_documents():
         documents = defaultdict(set)
 
         for metadata in metadatas:
-            source = metadata.get("source", "Unknown")
+            source = metadata.get("source", "Fuente sin identificar")
             page = metadata.get("page")
 
             documents[source].add(page)
@@ -194,7 +196,7 @@ def get_documents():
                 "source": source,
                 "chunks": sum(
                     1 for metadata in metadatas
-                    if metadata.get("source", "Unknown") == source
+                    if metadata.get("source", "Fuente sin identificar") == source
                 ),
                 "pages": valid_pages,
                 "page_count": len(valid_pages)
@@ -208,11 +210,12 @@ def get_documents():
             "documents": results
         }
 
-    except Exception as error:
+    except Exception:
+        logger.exception("No se pudieron recuperar los documentos indexados.")
         raise HTTPException(
             status_code=500,
-            detail=f"Error retrieving documents: {str(error)}"
-        )
+            detail="No se pudieron recuperar los documentos indexados.",
+        ) from None
 
 
 @app.get("/api/documents/search")
@@ -235,7 +238,7 @@ def search_local_documents(
     matches = []
     for text, metadata in zip(documents, metadatas):
         matches.append({
-            "source": metadata.get("source", "Unknown"),
+            "source": metadata.get("source", "Fuente sin identificar"),
             "page": metadata.get("page"),
             "excerpt": text.strip(),
         })
@@ -245,7 +248,7 @@ def search_local_documents(
 @app.get("/api/documents/{document_name}/download")
 async def download_document(document_name: str):
     if Path(document_name).name != document_name:
-        raise HTTPException(status_code=400, detail="Invalid document name.")
+        raise HTTPException(status_code=400, detail="El nombre del documento no es válido.")
 
     collection = get_collection()
     metadatas = collection.get(include=["metadatas"])["metadatas"] or []
@@ -254,13 +257,13 @@ async def download_document(document_name: str):
         for metadata in metadatas
     }
     if document_name not in indexed_sources:
-        raise HTTPException(status_code=404, detail="Indexed document not found.")
+        raise HTTPException(status_code=404, detail="No se encontró el documento indexado.")
 
     document_path = (DOCUMENTS_DIR / document_name).resolve()
     if document_path.parent != DOCUMENTS_DIR.resolve() or not document_path.is_file():
         raise HTTPException(
             status_code=404,
-            detail="The indexed PDF is not available in the local document folder.",
+            detail="El PDF indexado no está disponible en la carpeta local de documentos.",
         )
     return FileResponse(
         document_path,
@@ -278,7 +281,10 @@ def search_external_research(
         results = search_crossref(q, rows=limit)
     except CrossrefUnavailableError as error:
         logger.warning("Crossref search failed: %s", error)
-        raise HTTPException(status_code=502, detail=str(error)) from error
+        raise HTTPException(
+            status_code=502,
+            detail="No se pudo consultar Crossref. La biblioteca local sigue disponible.",
+        ) from error
     return {"query": q, "source": "Crossref", "results": results}
 
 
@@ -294,8 +300,9 @@ def chat(request: ChatRequest):
             detail=str(error)
         )
 
-    except Exception as error:
+    except Exception:
+        logger.exception("No se pudo procesar la consulta científica.")
         raise HTTPException(
             status_code=500,
-            detail=f"Error processing scientific query: {str(error)}"
-        )
+            detail="No se pudo procesar la consulta científica. Revisa la disponibilidad de los servicios locales.",
+        ) from None

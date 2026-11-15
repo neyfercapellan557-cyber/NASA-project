@@ -18,6 +18,7 @@ class RagServiceTests(unittest.TestCase):
         self.assertEqual(result["evidence"], [])
         mock_search.assert_not_called()
         self.assertIn("general knowledge", mock_generate.call_args.args[0])
+        self.assertIn("Always answer in Spanish", mock_generate.call_args.args[0])
 
     def test_general_knowledge_question_is_not_mistaken_for_research(self):
         self.assertFalse(is_research_question("What is photosynthesis?"))
@@ -217,7 +218,7 @@ class RagServiceTests(unittest.TestCase):
         )
 
         self.assertTrue(result["insufficient_evidence"])
-        self.assertIn("enough evidence", result["answer"])
+        self.assertIn("evidencia suficiente", result["answer"])
         self.assertEqual(result["sources"][0]["source"], "paper.pdf")
         self.assertEqual(result["evidence"][0]["page"], 12)
         mock_generate.assert_not_called()
@@ -243,7 +244,7 @@ class RagServiceTests(unittest.TestCase):
         )
 
         self.assertTrue(result["insufficient_evidence"])
-        self.assertIn("enough evidence", result["answer"])
+        self.assertIn("evidencia suficiente", result["answer"])
         mock_generate.assert_not_called()
 
 

@@ -51,7 +51,7 @@ class CrossrefSearchTests(unittest.TestCase):
     def test_network_failure_is_explicit(self, mock_urlopen):
         with self.assertRaisesRegex(
             CrossrefUnavailableError,
-            "local library is still available",
+            "La biblioteca local sigue disponible",
         ):
             search_crossref("flame safety")
         mock_urlopen.assert_called_once()

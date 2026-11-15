@@ -72,19 +72,19 @@ def search_crossref(query: str, rows: int = 10) -> list[dict]:
             payload = json.loads(response.read().decode("utf-8"))
     except HTTPError as error:
         raise CrossrefUnavailableError(
-            f"Crossref returned HTTP {error.code}."
+            f"Crossref devolvió el código HTTP {error.code}."
         ) from error
     except (URLError, TimeoutError, OSError) as error:
         raise CrossrefUnavailableError(
-            "Crossref could not be reached. The local library is still available."
+            "No se pudo conectar con Crossref. La biblioteca local sigue disponible."
         ) from error
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
         raise CrossrefUnavailableError(
-            "Crossref returned an unreadable response."
+            "Crossref devolvió una respuesta que no se pudo leer."
         ) from error
 
     message = payload.get("message")
     items = message.get("items") if isinstance(message, dict) else None
     if not isinstance(items, list):
-        raise CrossrefUnavailableError("Crossref returned an invalid work list.")
+        raise CrossrefUnavailableError("Crossref devolvió una lista de publicaciones no válida.")
     return [normalize_work(item) for item in items if isinstance(item, dict)]

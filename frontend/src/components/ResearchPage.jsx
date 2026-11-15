@@ -1,5 +1,15 @@
 import React from 'react'
-import { AlertCircle, ExternalLink, FileText, Info, Search } from 'lucide-react'
+import {
+  AlertCircle,
+  ArrowRight,
+  BrainCircuit,
+  Box,
+  ExternalLink,
+  FileText,
+  FlaskConical,
+  Info,
+  Search
+} from 'lucide-react'
 
 import {
   getDocumentUrl,
@@ -58,8 +68,8 @@ function LocalLibrary({ library, loading, error }) {
           <Search size={18} />
           <input
             type="search"
-            aria-label="Search indexed documents and their contents"
-            placeholder="Search document names or indexed text..."
+            aria-label="Buscar documentos indexados y su contenido"
+            placeholder="Buscar por nombre de documento o texto indexado..."
             value={query}
             onChange={(event) => {
               const nextQuery = event.target.value
@@ -75,21 +85,21 @@ function LocalLibrary({ library, loading, error }) {
           />
         </label>
         <label className="sort-control">
-          <span>ORDER</span>
+          <span>ORDENAR</span>
           <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
-            <option value="source">File name</option>
-            <option value="chunks">Most fragments</option>
+            <option value="source">Nombre del archivo</option>
+            <option value="chunks">Más fragmentos</option>
           </select>
         </label>
       </form>
 
       <div className="research-library-heading">
         <div>
-          <h3>Indexed locally</h3>
-          <p>Source names and fragment totals are read from ChromaDB.</p>
+          <h3>Documentos indexados localmente</h3>
+          <p>Los nombres de las fuentes y el total de fragmentos proceden de ChromaDB.</p>
         </div>
         <span>
-          {loading ? 'LOADING' : `${library?.total_documents ?? 0} SOURCES`}
+          {loading ? 'CARGANDO' : `${library?.total_documents ?? 0} FUENTES`}
         </span>
       </div>
 
@@ -101,7 +111,7 @@ function LocalLibrary({ library, loading, error }) {
 
       {textError && (
         <div className="inline-notice" role="status">
-          Content search is unavailable: {textError} File-name search remains available.
+          La búsqueda por contenido no está disponible: {textError} Puedes seguir buscando por nombre de archivo.
         </div>
       )}
 
@@ -111,41 +121,41 @@ function LocalLibrary({ library, loading, error }) {
 
       <div className="research-library">
         {loading && !library ? (
-          <div className="research-empty" role="status">Loading the indexed collection…</div>
+          <div className="research-empty" role="status">Cargando la colección indexada…</div>
         ) : filteredDocuments.length ? filteredDocuments.map((document) => (
           <article className="library-card" key={document.source}>
             <div className="library-card-icon"><FileText size={22} /></div>
             <div className="library-card-content">
-              <span className="library-category">LOCAL INDEX · PDF SOURCE</span>
+              <span className="library-category">ÍNDICE LOCAL · ARCHIVO PDF</span>
               <h3>{document.source}</h3>
-              <p>{document.chunks} indexed fragments · {document.page_count} pages with extracted text</p>
+              <p>{document.chunks} fragmentos indexados · {document.page_count} páginas con texto extraído</p>
               <details className="source-metadata">
-                <summary><Info size={13} /> Inspect source metadata</summary>
+                <summary><Info size={13} /> Consultar metadatos de la fuente</summary>
                 <dl>
-                  <div><dt>File</dt><dd>{document.source}</dd></div>
-                  <div><dt>Index</dt><dd>Local ChromaDB collection</dd></div>
-                  <div><dt>Extracted pages</dt><dd>{document.page_count}</dd></div>
-                  <div><dt>Indexed fragments</dt><dd>{document.chunks}</dd></div>
+                  <div><dt>Archivo</dt><dd>{document.source}</dd></div>
+                  <div><dt>Índice</dt><dd>Colección local de ChromaDB</dd></div>
+                  <div><dt>Páginas extraídas</dt><dd>{document.page_count}</dd></div>
+                  <div><dt>Fragmentos indexados</dt><dd>{document.chunks}</dd></div>
                 </dl>
               </details>
             </div>
             <div className="library-card-status">
-              <span className="indexed">Indexed</span>
+              <span className="indexed">Indexado</span>
               <a
                 className="source-link"
                 href={getDocumentUrl(document.source)}
                 target="_blank"
                 rel="noreferrer"
               >
-                Open local PDF <ExternalLink size={14} />
+                Abrir PDF local <ExternalLink size={14} />
               </a>
             </div>
           </article>
         )) : (
           <div className="research-empty">
             <Search size={25} />
-            <h3>No matching local documents</h3>
-            <p>Try a different title or phrase from the indexed text.</p>
+            <h3>No hay documentos locales coincidentes</h3>
+            <p>Prueba con otro título o una frase del texto indexado.</p>
           </div>
         )}
       </div>
@@ -154,20 +164,20 @@ function LocalLibrary({ library, loading, error }) {
         <section className="content-search-results" aria-live="polite">
           <div className="research-library-heading">
             <div>
-              <h3>Matches in indexed text</h3>
-              <p>Semantic matches from locally stored research fragments.</p>
+              <h3>Coincidencias en el texto indexado</h3>
+              <p>Resultados semánticos de fragmentos científicos almacenados localmente.</p>
             </div>
-            <span>{textLoading ? 'SEARCHING' : `${textMatches.length} MATCHES`}</span>
+            <span>{textLoading ? 'BUSCANDO' : `${textMatches.length} COINCIDENCIAS`}</span>
           </div>
-          {textLoading && <div className="research-hint">Searching indexed fragments…</div>}
+          {textLoading && <div className="research-hint">Buscando en los fragmentos indexados…</div>}
           {!textLoading && !textError && textMatches.length === 0 && (
-            <div className="research-hint">No text fragments matched this query.</div>
+            <div className="research-hint">Ningún fragmento de texto coincide con esta consulta.</div>
           )}
           {textMatches.map((match, index) => (
             <article className="evidence-card" key={`${match.source}-${match.page}-${index}`}>
               <div className="evidence-card-heading">
                 <strong>{match.source}</strong>
-                <span>PAGE {match.page ?? '—'}</span>
+                <span>PÁGINA {match.page ?? '—'}</span>
               </div>
               <p>{match.excerpt}</p>
               <a
@@ -177,7 +187,7 @@ function LocalLibrary({ library, loading, error }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                Open source · page {match.page ?? '—'} <ExternalLink size={13} />
+                Abrir fuente · página {match.page ?? '—'} <ExternalLink size={13} />
               </a>
             </article>
           ))}
@@ -224,20 +234,20 @@ function CrossrefSearch() {
           <Search size={18} />
           <input
             type="search"
-            aria-label="Search scientific publications in Crossref"
-            placeholder="Search title, author, or topic..."
+            aria-label="Buscar publicaciones científicas en Crossref"
+            placeholder="Buscar por título, autor o tema..."
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
         </label>
         <button className="primary-button" type="submit" disabled={loading}>
-          <Search size={15} /> {loading ? 'SEARCHING' : 'SEARCH CROSSREF'}
+          <Search size={15} /> {loading ? 'BUSCANDO' : 'BUSCAR EN CROSSREF'}
         </button>
       </form>
 
       <p className="research-hint">
-        Crossref bibliographic records are external metadata; a DOI does not guarantee
-        access to full text or peer review.
+        Los registros bibliográficos de Crossref son metadatos externos; un DOI no garantiza
+        acceso al texto completo ni que el trabajo haya pasado por revisión por pares.
       </p>
 
       {error && (
@@ -247,12 +257,12 @@ function CrossrefSearch() {
         </div>
       )}
 
-      {loading && <div className="research-empty" role="status">Querying Crossref…</div>}
+      {loading && <div className="research-empty" role="status">Consultando Crossref…</div>}
       {!loading && searched && !error && results.length === 0 && (
         <div className="research-empty">
           <Search size={25} />
-          <h3>No records found</h3>
-          <p>Try a broader title or topic.</p>
+          <h3>No se encontraron registros</h3>
+          <p>Prueba con un título o tema más amplio.</p>
         </div>
       )}
 
@@ -260,8 +270,8 @@ function CrossrefSearch() {
         <article className="library-card crossref-card" key={`${item.doi ?? item.title}-${index}`}>
           <div className="library-card-icon"><FileText size={22} /></div>
           <div className="library-card-content">
-            <span className="library-category">CROSSREF RECORD</span>
-            <h3>{item.title || 'Untitled Crossref record'}</h3>
+            <span className="library-category">REGISTRO CROSSREF · METADATOS ORIGINALES</span>
+            <h3><span className="source-original-label">Título original:</span> {item.title || 'Registro de Crossref sin título'}</h3>
             {item.authors?.length > 0 && <p>{item.authors.join(', ')}</p>}
             <div className="bibliographic-details">
               {item.year && <span>{item.year}</span>}
@@ -273,7 +283,7 @@ function CrossrefSearch() {
           <div className="library-card-status">
             {item.url && (
               <a className="source-link" href={item.url} target="_blank" rel="noreferrer">
-                View record <ExternalLink size={14} />
+                Ver registro <ExternalLink size={14} />
               </a>
             )}
           </div>
@@ -306,24 +316,30 @@ export default function ResearchPage() {
     <section className="research-page">
       <div className="research-page-header">
         <div>
-          <div className="eyebrow"><span className="status-dot" /> RESEARCH INTELLIGENCE</div>
-          <h2>Scientific evidence, traceable to its source</h2>
+          <div className="eyebrow"><span className="status-dot" /> INTELIGENCIA DE INVESTIGACIÓN</div>
+          <h2>Evidencia científica trazable hasta su fuente</h2>
           <p>
-            Search the local ChromaDB collection or query Crossref for external
-            bibliographic records.
+            Busca en la colección local de ChromaDB o consulta Crossref para encontrar
+            registros bibliográficos externos.
           </p>
         </div>
         <div className="research-total">
           <FileText size={22} />
           <div>
             <strong>{library?.total_documents ?? '—'}</strong>
-            <span>LOCAL SOURCES</span>
-            <small>{library?.total_chunks?.toLocaleString() ?? '—'} fragments</small>
+            <span>FUENTES LOCALES</span>
+            <small>{library?.total_chunks?.toLocaleString() ?? '—'} fragmentos</small>
           </div>
         </div>
       </div>
 
-      <div className="research-tabs" role="tablist" aria-label="Research source">
+      <nav className="experience-links research-experience-links" aria-label="Experiencias de IGNIS relacionadas">
+        <a href="#experiments-lab"><FlaskConical size={14} /> Explorar experimentos documentados <ArrowRight size={13} /></a>
+        <a href="#digital-twin"><Box size={14} /> Consultar escenarios del hábitat <ArrowRight size={13} /></a>
+        <a href="#assistant"><BrainCircuit size={14} /> Preguntar a la IA IGNIS sobre las fuentes <ArrowRight size={13} /></a>
+      </nav>
+
+      <div className="research-tabs" role="tablist" aria-label="Origen de la investigación">
         <button
           type="button"
           role="tab"
@@ -331,7 +347,7 @@ export default function ResearchPage() {
           className={tab === 'local' ? 'selected' : ''}
           onClick={() => setTab('local')}
         >
-          Local indexed documents
+          Documentos locales indexados
         </button>
         <button
           type="button"
@@ -340,7 +356,7 @@ export default function ResearchPage() {
           className={tab === 'crossref' ? 'selected' : ''}
           onClick={() => setTab('crossref')}
         >
-          External search · Crossref
+          Búsqueda externa · Crossref
         </button>
       </div>
 

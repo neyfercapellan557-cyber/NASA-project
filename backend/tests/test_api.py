@@ -100,13 +100,13 @@ class ApiTests(unittest.TestCase):
 
     @patch(
         "app.main.search_crossref",
-        side_effect=CrossrefUnavailableError("Crossref unavailable."),
+        side_effect=CrossrefUnavailableError("No se pudo conectar con Crossref."),
     )
     def test_crossref_failure_is_a_gateway_error(self, mock_search):
         response = self.client.get("/api/research/crossref?q=flame%20safety")
 
         self.assertEqual(response.status_code, 502)
-        self.assertIn("Crossref unavailable", response.json()["detail"])
+        self.assertIn("La biblioteca local sigue disponible", response.json()["detail"])
         mock_search.assert_called_once()
 
     @patch("app.main.answer_question", return_value={

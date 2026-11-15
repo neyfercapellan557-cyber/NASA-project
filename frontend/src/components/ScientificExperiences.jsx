@@ -8,9 +8,11 @@ import {
   BookOpen,
   Camera,
   Check,
+  Droplets,
   ExternalLink,
   Flame,
   Info,
+  Layers3,
   Pause,
   Play,
   RotateCcw,
@@ -46,35 +48,41 @@ const DEFAULT_TWIN_STATE = {
 const twinScenarios = [
   {
     id: 'baseline',
-    label: 'Reference condition',
-    description: 'Illustrative baseline for learning; not a measured spacecraft atmosphere.',
+    label: 'Condición de referencia',
+    description: 'Referencia ilustrativa para aprendizaje; no es una medición de la atmósfera de una nave espacial.',
     values: DEFAULT_TWIN_STATE,
-    alert: 'No scenario change selected'
+    alert: 'No se seleccionó un cambio de escenario'
   },
   {
     id: 'ventilation',
-    label: 'Reduced ventilation · hypothetical',
-    description: 'A hypothetical input set illustrates how monitored values might be reviewed together. It is not a prediction.',
+    label: 'Ventilación reducida · hipotético',
+    description: 'Un conjunto hipotético de entradas ilustra cómo podrían revisarse conjuntamente los valores monitorizados. No es una predicción.',
     values: { temperatureC: 24, oxygenPercent: 20.9, carbonMonoxidePpm: 1, carbonDioxidePpm: 1100 },
-    alert: 'Review hypothetical ventilation scenario'
+    alert: 'Revisar el escenario hipotético de ventilación'
   },
   {
     id: 'heating',
-    label: 'Localized heating · hypothetical',
-    description: 'A hypothetical localized heating case changes illustrative values only; no fire growth or sensor response is modeled.',
+    label: 'Calentamiento localizado · hipotético',
+    description: 'Un caso hipotético de calentamiento localizado solo modifica valores ilustrativos; no se modelan el crecimiento del fuego ni la respuesta de los sensores.',
     values: { temperatureC: 36, oxygenPercent: 20.4, carbonMonoxidePpm: 3, carbonDioxidePpm: 1500 },
-    alert: 'Review hypothetical heating scenario'
+    alert: 'Revisar el escenario hipotético de calentamiento'
   }
 ]
 
 const habitatZones = [
-  { id: 'crew', label: 'Crew quarters', position: [-2.7, 0, 0], detail: 'Bunk and personal-equipment zone; displayed sensor markers are conceptual.' },
-  { id: 'work', label: 'Work & science', position: [0, 0, 0], detail: 'Instrument rack and work surface; no real spacecraft layout is represented.' },
-  { id: 'utility', label: 'Utility bay', position: [2.7, 0, 0], detail: 'Environmental-system equipment zone; no operational controls are modeled.' }
+  { id: 'crew', label: 'Alojamiento de la tripulación', position: [-2.7, 0, 0], detail: 'Zona de literas y equipo personal; los marcadores de sensores son conceptuales.' },
+  { id: 'work', label: 'Trabajo y ciencia', position: [0, 0, 0], detail: 'Bastidor de instrumentos y superficie de trabajo; no representa la distribución de una nave real.' },
+  { id: 'utility', label: 'Zona de servicios', position: [2.7, 0, 0], detail: 'Zona de equipos de sistemas ambientales; no se modelan controles operativos.' }
 ]
 
-function HabitatRoom({ zone, selected, statusColor, onSelect }) {
+function HabitatRoom({ zone, selected, showSensors, onSelect }) {
   const trim = selected ? '#38d6e5' : '#38546a'
+  const sensorMarkers = [
+    { label: 'O₂', color: '#51dce8', position: [-0.62, 0.83, -0.65] },
+    { label: 'CO', color: '#ffb56e', position: [0, 0.83, -0.65] },
+    { label: 'CO₂', color: '#ff855d', position: [0.62, 0.83, -0.65] }
+  ]
+
   return (
     <group position={zone.position} onClick={(event) => {
       event.stopPropagation()
@@ -122,10 +130,12 @@ function HabitatRoom({ zone, selected, statusColor, onSelect }) {
         <boxGeometry args={[0.19, 0.07, 0.025]} />
         <meshBasicMaterial color="#35cddd" />
       </mesh>
-      <mesh position={[0, 0.75, -0.55]}>
-        <sphereGeometry args={[0.09, 16, 12]} />
-        <meshStandardMaterial color={statusColor} emissive={statusColor} emissiveIntensity={1.8} />
-      </mesh>
+      {showSensors && sensorMarkers.map((marker) => (
+        <mesh key={marker.label} position={marker.position}>
+          <sphereGeometry args={[0.055, 12, 10]} />
+          <meshBasicMaterial color={marker.color} />
+        </mesh>
+      ))}
       <mesh position={[0, 0.15, 1.11]}>
         <boxGeometry args={[0.56, 1.62, 0.06]} />
         <meshStandardMaterial color={trim} metalness={0.5} roughness={0.45} />
@@ -138,25 +148,61 @@ function HabitatRoom({ zone, selected, statusColor, onSelect }) {
   )
 }
 
-function HabitatScene({ selectedZone, scenarioId, onSelectZone }) {
-  const color = scenarioId === 'baseline' ? '#35cddd' : '#ffae62'
+function HabitatAirflowCue() {
+  const particleRefs = React.useRef([])
+  const particleCount = 18
+
+  useFrame(({ clock }) => {
+    particleRefs.current.forEach((particle, index) => {
+      if (!particle) return
+      const progress = (clock.elapsedTime * 0.11 + index / particleCount) % 1
+      const x = progress * 6.1 - 3.05
+      particle.position.set(x, 0.72 + Math.sin(progress * Math.PI * 4) * 0.045, 0.69)
+    })
+  })
+
+  return (
+    <group>
+      <mesh position={[0, 0.72, 0.69]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.009, 0.009, 6.1, 6]} />
+        <meshBasicMaterial color="#35cddd" transparent opacity={0.42} />
+      </mesh>
+      <mesh position={[0.35, 0.72, 0.69]} rotation={[0, 0, -Math.PI / 2]}>
+        <coneGeometry args={[0.07, 0.16, 8]} />
+        <meshBasicMaterial color="#60e1e9" transparent opacity={0.75} />
+      </mesh>
+      {Array.from({ length: particleCount }, (_, index) => (
+        <mesh
+          key={index}
+          ref={(node) => { particleRefs.current[index] = node }}
+        >
+          <sphereGeometry args={[0.025, 6, 6]} />
+          <meshBasicMaterial color="#73e8ed" />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function HabitatScene({ selectedZone, showSensors, showAirflow, onSelectZone }) {
   return (
     <>
       <color attach="background" args={['#081320']} />
       <ambientLight intensity={0.85} />
       <directionalLight position={[4, 7, 5]} intensity={1.65} color="#dcecff" />
       <pointLight position={[-3, 2, 1]} intensity={5} distance={9} color="#35cddd" />
-      <pointLight position={[3, 1, -2]} intensity={3} distance={8} color="#ff914f" />
+      <pointLight position={[3, 1, -2]} intensity={2} distance={8} color="#ff914f" />
       <gridHelper args={[12, 24, '#234456', '#172b3e']} position={[0, -1.38, 0]} />
       {habitatZones.map((zone) => (
         <HabitatRoom
           key={zone.id}
           zone={zone}
           selected={selectedZone.id === zone.id}
-          statusColor={color}
+          showSensors={showSensors}
           onSelect={onSelectZone}
         />
       ))}
+      {showAirflow && <HabitatAirflowCue />}
       {[-1.35, 1.35].map((x) => (
         <group key={x} position={[x, 0.04, 0]} rotation={[0, 0, Math.PI / 2]}>
           <mesh>
@@ -265,9 +311,9 @@ function TwinMetric({ label, value, unit, icon: Icon, range, percent, note }) {
     <article className="twin-metric">
       <div className="twin-metric-top">
         <span><Icon size={15} /> {label}</span>
-        <button type="button" className="twin-info-trigger" title={note} aria-label={`${label}: ${note}`}>
-          <Info size={13} />
-        </button>
+        <span className="twin-info-trigger" role="img" title={note} aria-label={`${label}: ${note}`}>
+          <Info size={13} aria-hidden="true" />
+        </span>
       </div>
       <strong>{value}<small> {unit}</small></strong>
       <div className="twin-meter" role="img" aria-label={`${label} illustrative display, ${percent}% of display scale`}>
@@ -281,65 +327,85 @@ function TwinMetric({ label, value, unit, icon: Icon, range, percent, note }) {
 export function DigitalTwin() {
   const [scenarioId, setScenarioId] = React.useState('baseline')
   const [selectedZone, setSelectedZone] = React.useState(habitatZones[0])
+  const [showSensors, setShowSensors] = React.useState(true)
+  const [showAirflow, setShowAirflow] = React.useState(false)
   const controlsRef = React.useRef(null)
   const scenario = twinScenarios.find((item) => item.id === scenarioId) ?? twinScenarios[0]
   const values = scenario.values
   const changed = scenarioId !== 'baseline'
 
   const metrics = [
-    { key: 'temperatureC', label: 'Ambient temperature', value: values.temperatureC.toFixed(1), unit: '°C', icon: Thermometer, range: 'Illustrative scale · 0–50 °C', percent: (values.temperatureC / 50) * 100, note: 'Hypothetical scenario value; not a habitat measurement or predicted thermal response.' },
-    { key: 'oxygenPercent', label: 'Oxygen fraction', value: values.oxygenPercent.toFixed(1), unit: '% vol', icon: Activity, range: 'Illustrative input · 0–30 % vol', percent: (values.oxygenPercent / 30) * 100, note: 'Hypothetical concentration used to explore an interface; it does not represent a spacecraft atmosphere.' },
-    { key: 'carbonMonoxidePpm', label: 'Carbon monoxide', value: String(values.carbonMonoxidePpm), unit: 'ppm', icon: Flame, range: 'Illustrative scale · 0–20 ppm', percent: (values.carbonMonoxidePpm / 20) * 100, note: 'Hypothetical concentration input; not a sensor measurement, alarm threshold, or safety recommendation.' },
-    { key: 'carbonDioxidePpm', label: 'Carbon dioxide', value: String(values.carbonDioxidePpm), unit: 'ppm', icon: Wind, range: 'Illustrative scale · 0–2,000 ppm', percent: (values.carbonDioxidePpm / 2000) * 100, note: 'Hypothetical concentration input; not a sensor measurement, alarm threshold, or safety recommendation.' }
+    { key: 'temperatureC', label: 'Temperatura ambiente', value: values.temperatureC.toFixed(1), unit: '°C', icon: Thermometer, range: 'Escala ilustrativa · 0–50 °C', percent: (values.temperatureC / 50) * 100, note: 'Valor de un escenario hipotético; no es una medición del hábitat ni una respuesta térmica predicha.' },
+    { key: 'oxygenPercent', label: 'Fracción de oxígeno', value: values.oxygenPercent.toFixed(1), unit: '% vol', icon: Activity, range: 'Entrada ilustrativa · 0–30 % vol', percent: (values.oxygenPercent / 30) * 100, note: 'Concentración hipotética para explorar la interfaz; no representa la atmósfera de una nave espacial.' },
+    { key: 'carbonMonoxidePpm', label: 'Monóxido de carbono', value: String(values.carbonMonoxidePpm), unit: 'ppm', icon: Flame, range: 'Escala ilustrativa · 0–20 ppm', percent: (values.carbonMonoxidePpm / 20) * 100, note: 'Entrada de concentración hipotética; no es una medición de sensor, un umbral de alarma ni una recomendación de seguridad.' },
+    { key: 'carbonDioxidePpm', label: 'Dióxido de carbono', value: String(values.carbonDioxidePpm), unit: 'ppm', icon: Wind, range: 'Escala ilustrativa · 0–2.000 ppm', percent: (values.carbonDioxidePpm / 2000) * 100, note: 'Entrada de concentración hipotética; no es una medición de sensor, un umbral de alarma ni una recomendación de seguridad.' }
   ]
 
   return (
     <section className="module-page ignis-experience">
       <PageHeader
-        kicker="IGNIS DIGITAL TWIN · EDUCATIONAL CONCEPT"
-        title="A habitat you can inspect"
-        description="Explore a schematic modular habitat, inspect its zones, and compare explicitly hypothetical safety scenarios. This is not a spacecraft replica, detection system, or operational control."
+        kicker="GEMELO DIGITAL IGNIS · CONCEPTO EDUCATIVO"
+        title="Un hábitat que puedes explorar"
+        description="Explora un hábitat modular esquemático, examina sus zonas y compara escenarios de seguridad explícitamente hipotéticos. No es una réplica de una nave espacial, un sistema de detección ni un control operativo."
       />
 
-      <div className="experience-links" aria-label="Connected IGNIS experiences">
-        <a href="#experiments-lab"><Flame size={14} /> Open combustion lab <ArrowRight size={13} /></a>
-        <a href="#microgravity-lab"><ArrowLeftRight size={14} /> Compare Earth & microgravity <ArrowRight size={13} /></a>
-        <a href="#assistant"><BookOpen size={14} /> Investigate with IGNIS AI <ArrowRight size={13} /></a>
+      <div className="experience-links" aria-label="Experiencias de IGNIS conectadas">
+        <a href="#experiments-lab"><Flame size={14} /> Abrir laboratorio de combustión <ArrowRight size={13} /></a>
+        <a href="#microgravity-lab"><ArrowLeftRight size={14} /> Comparar la Tierra y la microgravedad <ArrowRight size={13} /></a>
+        <a href="#habitat-safety"><Activity size={14} /> Abrir revisión de seguridad <ArrowRight size={13} /></a>
+        <a href="#assistant"><BookOpen size={14} /> Investigar con IGNIS IA <ArrowRight size={13} /></a>
       </div>
 
       <div className="twin-workspace">
-        <section className="twin-scene-panel" aria-label="Interactive habitat model">
+        <section className="twin-scene-panel" aria-label="Modelo interactivo del hábitat">
           <div className="experience-panel-heading">
             <div>
-              <span className="panel-kicker">SCHEMATIC HABITAT · INTERACTIVE 3D</span>
-              <h3>Interior zones & sensor locations</h3>
+              <span className="panel-kicker">HÁBITAT ESQUEMÁTICO · 3D INTERACTIVO</span>
+              <h3>Zonas interiores y ubicación de sensores</h3>
             </div>
-            <span className="experience-badge"><Camera size={12} /> ORBIT · ZOOM · PAN</span>
+            <span className="experience-badge"><Camera size={12} /> GIRAR · ACERCAR · MOVER</span>
           </div>
           <div className="experience-canvas twin-canvas">
             <div className="experience-scene-label"><span className={changed ? 'scenario-dot warning' : 'scenario-dot'} /> {scenario.label}</div>
-            <SceneBoundary fallback={<div className="experience-webgl-fallback">3D rendering is unavailable. Scenario values, descriptions, and references are still available below.</div>}>
+            <SceneBoundary fallback={<div className="experience-webgl-fallback">La visualización 3D no está disponible. Los valores, descripciones y referencias del escenario siguen disponibles abajo.</div>}>
               <Canvas
                 camera={{ position: [7.6, 5.2, 8.3], fov: 43 }}
                 dpr={[1, 1.3]}
                 gl={{ antialias: true, alpha: false, powerPreference: 'low-power' }}
-                fallback={<div className="experience-webgl-fallback">WebGL is unavailable in this browser.</div>}
+                fallback={<div className="experience-webgl-fallback">WebGL no está disponible en este navegador.</div>}
               >
                 <HabitatScene
                   selectedZone={selectedZone}
-                  scenarioId={scenarioId}
+                  showSensors={showSensors}
+                  showAirflow={showAirflow}
                   onSelectZone={setSelectedZone}
                 />
                 <CameraControls controlsRef={controlsRef} />
               </Canvas>
             </SceneBoundary>
             <button type="button" className="experience-camera-reset" onClick={() => controlsRef.current?.reset()}>
-              <RotateCcw size={12} /> Reset camera
+              <RotateCcw size={12} /> Restablecer cámara
             </button>
-            <div className="twin-canvas-caption">Schematic arrangement · sensor markers are illustrative</div>
+            <div className="twin-canvas-caption">Distribución esquemática · las capas son ilustrativas, no medidas</div>
           </div>
 
-          <div className="twin-zone-list" role="group" aria-label="Select habitat zone">
+          <div className="twin-visual-toggles" role="group" aria-label="Capas del modelo del hábitat">
+            <button type="button" aria-pressed={showSensors} onClick={() => setShowSensors((current) => !current)}>
+              <Activity size={14} /> Marcadores de sensores
+              <span>{showSensors ? 'ACTIVADOS' : 'DESACTIVADOS'}</span>
+            </button>
+            <button type="button" aria-pressed={showAirflow} onClick={() => setShowAirflow((current) => !current)}>
+              <Wind size={14} /> Indicador de flujo de aire
+              <span>{showAirflow ? 'ACTIVADO' : 'DESACTIVADO'}</span>
+            </button>
+          </div>
+          {(showSensors || showAirflow) && (
+            <div className="twin-overlay-note" aria-live="polite">
+              {showSensors && <span><i className="sensor-key oxygen" /> O₂ <i className="sensor-key carbon-monoxide" /> CO <i className="sensor-key carbon-dioxide" /> CO₂</span>}
+              {showAirflow && <small>Solo es un indicador direccional · sin modelo de dinámica de fluidos computacional ni de ubicación de sensores</small>}
+            </div>
+          )}
+          <div className="twin-zone-list" role="group" aria-label="Seleccionar zona del hábitat">
             {habitatZones.map((zone, index) => (
               <button
                 type="button"
@@ -361,13 +427,13 @@ export function DigitalTwin() {
         <aside className="twin-monitor-panel">
           <div className="experience-panel-heading">
             <div>
-              <span className="panel-kicker">CONDITION MONITOR · HYPOTHETICAL DATA</span>
-              <h3>Scenario telemetry</h3>
+              <span className="panel-kicker">MONITOR DE CONDICIONES · DATOS HIPOTÉTICOS</span>
+              <h3>Telemetría del escenario</h3>
             </div>
             <SlidersHorizontal size={17} />
           </div>
           <label className="twin-scenario-select">
-            <span>EDUCATIONAL SCENARIO</span>
+            <span>ESCENARIO EDUCATIVO</span>
             <select value={scenarioId} onChange={(event) => setScenarioId(event.target.value)}>
               {twinScenarios.map((item) => <option value={item.id} key={item.id}>{item.label}</option>)}
             </select>
@@ -386,14 +452,14 @@ export function DigitalTwin() {
           <div className={`twin-alert ${changed ? 'scenario-alert' : ''}`}>
             <span className="twin-alert-light" />
             <div>
-              <strong>{changed ? 'EDUCATIONAL REVIEW PROMPT' : 'REFERENCE SCENARIO'}</strong>
-              <p>{scenario.alert}. No alarm thresholds, detection logic, or control response are implemented.</p>
+              <strong>{changed ? 'INDICACIÓN PARA REVISIÓN EDUCATIVA' : 'ESCENARIO DE REFERENCIA'}</strong>
+              <p>{scenario.alert}. No se implementan umbrales de alarma, lógica de detección ni respuestas de control.</p>
             </div>
           </div>
 
           <div className="twin-sensor-status">
-            <span>SENSOR STATUS</span>
-            <strong><i /> Simulated indicators · no sensor diagnostics</strong>
+            <span>ESTADO DE LOS SENSORES</span>
+            <strong><i /> Indicadores simulados · sin diagnóstico de sensores</strong>
           </div>
         </aside>
       </div>
@@ -401,17 +467,17 @@ export function DigitalTwin() {
       <section className="twin-comparison-panel">
         <div className="experience-panel-heading">
           <div>
-            <span className="panel-kicker">SCENARIO COMPARISON · NOT MEASUREMENTS</span>
-            <h3>Reference and selected condition</h3>
+            <span className="panel-kicker">COMPARACIÓN DE ESCENARIOS · NO SON MEDICIONES</span>
+            <h3>Condición de referencia y condición seleccionada</h3>
           </div>
-          <span className="experience-badge"><ArrowLeftRight size={12} /> SIDE BY SIDE</span>
+          <span className="experience-badge"><ArrowLeftRight size={12} /> LADO A LADO</span>
         </div>
-        <div className="twin-comparison-table" role="table" aria-label="Hypothetical scenario values compared with reference">
+        <div className="twin-comparison-table" role="table" aria-label="Comparación de valores del escenario hipotético con la referencia">
           <div className="twin-comparison-row header" role="row">
             <span role="columnheader">Variable</span>
-            <strong role="columnheader">Reference (hypothetical)</strong>
+            <strong role="columnheader">Referencia (hipotética)</strong>
             <strong role="columnheader">{scenario.label}</strong>
-            <span role="columnheader">Change in scenario</span>
+            <span role="columnheader">Cambio en el escenario</span>
           </div>
           {metrics.map((metric) => {
             const start = DEFAULT_TWIN_STATE[metric.key]
@@ -432,22 +498,22 @@ export function DigitalTwin() {
 
       <div className="experience-science-grid">
         <details className="experience-science-card" open>
-          <summary><span><Info size={15} /> Scientific scope & assumptions</span><ArrowDown size={14} /></summary>
-          <p><strong>Classification:</strong> conceptual visualization. The 3D habitat is schematic; all displayed telemetry is manually specified hypothetical scenario data.</p>
-          <p><strong>Model:</strong> no combustion, atmosphere, sensor, thermal, or ventilation equations are solved. Scenario values are direct educational inputs, not predicted outcomes.</p>
-          <p><strong>Limitations:</strong> no spacecraft geometry, sensor placement standard, material behavior, alarm threshold, or fire-control procedure is represented.</p>
+          <summary><span><Info size={15} /> Alcance científico y supuestos</span><ArrowDown size={14} /></summary>
+          <p><strong>Clasificación:</strong> visualización conceptual. El hábitat 3D es esquemático; toda la telemetría mostrada son datos hipotéticos definidos manualmente.</p>
+          <p><strong>Modelo:</strong> no se resuelven ecuaciones de combustión, atmósfera, sensores, temperatura o ventilación. Los valores del escenario son entradas educativas directas, no resultados predichos.</p>
+          <p><strong>Limitaciones:</strong> no se representan la geometría de una nave espacial, normas de ubicación de sensores, comportamiento de materiales, umbrales de alarma ni procedimientos de control de incendios.</p>
         </details>
         <section className="experience-science-card">
-          <span className="panel-kicker">TRACEABLE RESEARCH & NEXT STEPS</span>
-          <h3>Continue with primary evidence</h3>
+          <span className="panel-kicker">INVESTIGACIÓN TRAZABLE Y SIGUIENTES PASOS</span>
+          <h3>Continúa con la evidencia primaria</h3>
           <a href="https://ntrs.nasa.gov/citations/20150023456" target="_blank" rel="noreferrer">
-            NASA · Detailed Results from the FLEX Experiment <ExternalLink size={13} />
+            Título original de NASA · Detailed Results from the FLEX Experiment <ExternalLink size={13} />
           </a>
           <a href="https://ntrs.nasa.gov/citations/20210011385" target="_blank" rel="noreferrer">
-            NASA · BASS-II Summary Report <ExternalLink size={13} />
+            Título original de NASA · BASS-II Summary Report <ExternalLink size={13} />
           </a>
-          <a href="#research"><BookOpen size={13} /> Search indexed publications in IGNIS</a>
-          <a href="#assistant"><Activity size={13} /> Ask IGNIS AI about cited evidence</a>
+          <a href="#research"><BookOpen size={13} /> Buscar publicaciones indexadas en IGNIS</a>
+          <a href="#assistant"><Activity size={13} /> Consultar a IGNIS IA sobre la evidencia citada</a>
         </section>
       </div>
     </section>
@@ -462,101 +528,245 @@ const comparisonDefaults = {
   ventilationMs: 0.1
 }
 
+const overlayDefaults = {
+  flameStructure: true,
+  buoyancyFlow: true,
+  massTransfer: true,
+  thermalCue: false,
+  sootMarkers: false
+}
+
+const gravityPresets = [
+  { label: 'EEI · idealizado', value: 0, detail: '≈ 0 g' },
+  { label: 'Lunar', value: 0.166, detail: '0,17 g' },
+  { label: 'Marciano', value: 0.38, detail: '0,38 g' },
+  { label: 'Terrestre', value: 1, detail: '1,00 g' }
+]
+
 function dropletDiameter(parameters, time) {
   return Math.sqrt(Math.max(0, parameters.diameterMm ** 2 - parameters.evaporationK * time))
 }
 
-function CombustionEnvelope({ mode, radius, oxygenPercent, ambientTemperatureK }) {
+function useSimulationClock(playing, elapsedSeconds, playbackRate) {
+  const timeRef = React.useRef(elapsedSeconds)
+  React.useEffect(() => {
+    timeRef.current = elapsedSeconds
+  }, [elapsedSeconds])
+  useFrame((_, delta) => {
+    if (playing) timeRef.current += delta * playbackRate
+  })
+  return timeRef
+}
+
+function CombustionEnvelope({
+  scenario,
+  gravityLevel,
+  radius,
+  oxygenPercent,
+  ambientTemperatureK,
+  overlays,
+  playing,
+  simulationTime
+}) {
   const envelope = React.useRef(null)
   const oxygenFactor = clamp((oxygenPercent - 12) / 12, 0.2, 1)
   const heatTint = clamp((ambientTemperatureK - 250) / 650, 0, 1)
-  useFrame(({ clock }) => {
+  const gravity = clamp(gravityLevel, 0, 1)
+  const isDroplet = scenario === 'droplet'
+  const flameColor = heatTint > 0.58 ? '#ff8b4e' : '#f6b95e'
+  const flameOpacity = 0.2 + oxygenFactor * 0.28
+  useFrame(() => {
     if (!envelope.current) return
-    const pulse = 1 + Math.sin(clock.elapsedTime * 2.2) * 0.018
-    envelope.current.scale.set(mode === 'earth' ? 0.65 * pulse : pulse, mode === 'earth' ? 1.3 * pulse : 0.92 * pulse, mode === 'earth' ? 0.65 * pulse : pulse)
+    const pulse = playing ? 1 + Math.sin(simulationTime.current * 2.2) * 0.018 : 1
+    const xScale = isDroplet ? 1 - gravity * 0.16 : 1 - gravity * 0.24
+    const yScale = isDroplet ? 1 + gravity * 0.34 : 0.82 + gravity * 1.42
+    envelope.current.scale.set(xScale * pulse, yScale * pulse, xScale * pulse)
+    envelope.current.position.y = isDroplet ? gravity * 0.12 : -0.42 + gravity * 0.16
   })
 
   return (
     <group ref={envelope}>
-      {mode === 'earth' ? (
-        <>
-          <mesh position={[0, 0.46, 0]}>
-            <sphereGeometry args={[radius * 1.45, 28, 20]} />
-            <meshBasicMaterial color="#ff9d59" transparent opacity={0.19 * oxygenFactor} depthWrite={false} />
-          </mesh>
-          <mesh position={[0, 0.27, 0]}>
-            <coneGeometry args={[radius * 1.02, radius * 2.1, 32, 1, true]} />
-            <meshBasicMaterial color={heatTint > 0.5 ? '#ff8b4e' : '#f6b95e'} transparent opacity={0.46 * oxygenFactor} side={THREE.DoubleSide} depthWrite={false} />
-          </mesh>
-          <mesh position={[0, 0.25, 0]}>
-            <coneGeometry args={[radius * 0.58, radius * 1.45, 28, 1, true]} />
-            <meshBasicMaterial color="#ffe1a0" transparent opacity={0.52 * oxygenFactor} side={THREE.DoubleSide} depthWrite={false} />
-          </mesh>
-        </>
-      ) : (
-        <>
-          <mesh>
-            <sphereGeometry args={[radius * 1.85, 32, 24]} />
-            <meshBasicMaterial color="#ff985a" transparent opacity={0.16 * oxygenFactor} depthWrite={false} />
-          </mesh>
-          <mesh>
-            <sphereGeometry args={[radius * 1.42, 30, 22]} />
-            <meshBasicMaterial color="#ffc06d" transparent opacity={0.25 * oxygenFactor} depthWrite={false} />
-          </mesh>
-          <mesh>
-            <torusGeometry args={[radius * 2.05, 0.012, 6, 48]} />
-            <meshBasicMaterial color="#49d6e5" transparent opacity={0.6} />
-          </mesh>
-        </>
+      {overlays.flameStructure && (
+        isDroplet ? (
+          <>
+            <mesh>
+              <sphereGeometry args={[radius * 1.9, 32, 24]} />
+              <meshBasicMaterial color={flameColor} transparent opacity={flameOpacity * 0.45} depthWrite={false} />
+            </mesh>
+            <mesh>
+              <sphereGeometry args={[radius * 1.52, 30, 22]} />
+              <meshBasicMaterial color="#ffc06d" transparent opacity={flameOpacity * 0.62} depthWrite={false} />
+            </mesh>
+            <mesh>
+              <sphereGeometry args={[radius * 1.12, 26, 20]} />
+              <meshBasicMaterial color="#ffe1a0" transparent opacity={flameOpacity * 0.34} depthWrite={false} />
+            </mesh>
+          </>
+        ) : (
+          <>
+            <mesh>
+              <sphereGeometry args={[0.34, 32, 24]} />
+              <meshBasicMaterial color={flameColor} transparent opacity={flameOpacity * 0.48} depthWrite={false} />
+            </mesh>
+            <mesh position={[0, 0.36, 0]} scale={[1, Math.max(0.015, gravity), 1]}>
+              <coneGeometry args={[0.32, 1.05, 32, 12]} />
+              <meshBasicMaterial color={flameColor} transparent opacity={flameOpacity * gravity * 0.72} side={THREE.DoubleSide} depthWrite={false} />
+            </mesh>
+            <mesh position={[0, 0.1, 0]} scale={[0.72, 0.8 + gravity * 0.34, 0.72]}>
+              <sphereGeometry args={[0.25, 28, 20]} />
+              <meshBasicMaterial color="#ffe1a0" transparent opacity={flameOpacity * 0.56} depthWrite={false} />
+            </mesh>
+          </>
+        )
+      )}
+      {overlays.thermalCue && (
+        <mesh position={[0, isDroplet ? 0 : 0.12, 0]}>
+          <sphereGeometry args={[isDroplet ? radius * 2.2 : 0.57, 24, 18]} />
+          <meshBasicMaterial
+            color={heatTint > 0.58 ? '#ff7652' : '#ffd17a'}
+            transparent
+            opacity={0.055 + heatTint * 0.055}
+            side={THREE.BackSide}
+            depthWrite={false}
+          />
+        </mesh>
       )}
     </group>
   )
 }
 
-function TransportCue({ mode, ventilationMs }) {
-  const windLength = 0.25 + ventilationMs * 2.2
+function TransportCue({
+  gravityLevel,
+  ventilationMs,
+  overlays,
+  simulationTime,
+  onSelect
+}) {
+  const buoyancyParticles = React.useRef([])
+  const transferParticles = React.useRef([])
+  const sootParticles = React.useRef([])
+  const gravity = clamp(gravityLevel, 0, 1)
+  const buoyancyLength = 0.28 + gravity * 0.82
+  const particleCount = 12
+  const transferCount = 16
+  const sootCount = 8
+  const windLength = ventilationMs * 2.2
+
+  useFrame(() => {
+    const time = simulationTime.current
+    buoyancyParticles.current.forEach((particle, index) => {
+      if (!particle) return
+      const progress = (time * (0.12 + gravity * 0.26) + index / particleCount) % 1
+      particle.position.set(
+        0.6 + Math.sin(progress * Math.PI * 4) * 0.1,
+        -0.5 + progress * buoyancyLength,
+        0.05 + Math.cos(progress * Math.PI * 4) * 0.08
+      )
+    })
+    transferParticles.current.forEach((particle, index) => {
+      if (!particle) return
+      const angle = (index / transferCount) * Math.PI * 2 + time * 0.18
+      const radius = 0.32 + ((time * 0.09 + index / transferCount) % 1) * 0.45
+      particle.position.set(
+        Math.cos(angle) * radius + Math.sin(time * 0.2 + index) * ventilationMs * 0.16,
+        -0.48 + Math.sin(angle) * radius * 0.68,
+        Math.sin(angle) * radius
+      )
+    })
+    sootParticles.current.forEach((particle, index) => {
+      if (!particle) return
+      const progress = (time * 0.08 + index / sootCount) % 1
+      particle.position.set(
+        0.12 + Math.sin(progress * Math.PI * 3 + index) * 0.1,
+        0.05 + progress * (0.45 + gravity * 0.5),
+        Math.cos(progress * Math.PI * 3 + index) * 0.1
+      )
+    })
+  })
+
   return (
     <group>
-      {mode === 'earth' ? (
+      {overlays.buoyancyFlow && gravity > 0.01 && (
+        <group onClick={(event) => {
+          event.stopPropagation()
+          onSelect('Indicador de flujo por flotabilidad', 'Las partículas ascendentes y la flecha son cualitativas y se escalan según la gravedad seleccionada. No representan un campo de velocidad calculado; la difusión y la ventilación impuesta se representan por separado.')
+        }}>
+          <mesh position={[0.6, -0.5 + buoyancyLength / 2, 0.05]}>
+            <cylinderGeometry args={[0.012, 0.012, buoyancyLength, 8]} />
+            <meshBasicMaterial color="#ffb56e" transparent opacity={0.25 + gravity * 0.4} />
+          </mesh>
+          <mesh position={[0.6, -0.5 + buoyancyLength, 0.05]}>
+            <coneGeometry args={[0.06, 0.16, 10]} />
+            <meshBasicMaterial color="#ffcf83" transparent opacity={0.4 + gravity * 0.5} />
+          </mesh>
+          {Array.from({ length: particleCount }, (_, index) => (
+            <mesh key={`buoyancy-${index}`} ref={(node) => { buoyancyParticles.current[index] = node }}>
+              <sphereGeometry args={[0.025, 7, 6]} />
+              <meshBasicMaterial color="#ffbb74" transparent opacity={0.55} />
+            </mesh>
+          ))}
+        </group>
+      )}
+      {overlays.massTransfer && (
+        <group onClick={(event) => {
+          event.stopPropagation()
+          onSelect('Indicador de transferencia de masa', 'Las partículas cian indican que la difusión molecular puede continuar con baja gravedad. Sus trayectorias son ilustrativas y no resuelven el transporte ni la concentración de especies.')
+        }}>
+          {Array.from({ length: transferCount }, (_, index) => (
+            <mesh key={`transfer-${index}`} ref={(node) => { transferParticles.current[index] = node }}>
+              <sphereGeometry args={[0.018, 6, 5]} />
+              <meshBasicMaterial color={index % 2 ? '#43d5e5' : '#a9eff1'} transparent opacity={0.7} />
+            </mesh>
+          ))}
+        </group>
+      )}
+      {overlays.sootMarkers && (
+        <group onClick={(event) => {
+          event.stopPropagation()
+          onSelect('Marcadores simbólicos de hollín', 'Estos marcadores oscuros opcionales son solo ilustrativos. La escena no calcula la formación, concentración ni producción de hollín.')
+        }}>
+          {Array.from({ length: sootCount }, (_, index) => (
+            <mesh key={`soot-${index}`} ref={(node) => { sootParticles.current[index] = node }}>
+              <sphereGeometry args={[0.024, 7, 6]} />
+              <meshBasicMaterial color="#627181" transparent opacity={0.68} />
+            </mesh>
+          ))}
+        </group>
+      )}
+      {ventilationMs > 0 && (
         <>
-          <mesh position={[0.95, 0.55, 0]}>
-            <cylinderGeometry args={[0.018, 0.018, 0.9, 8]} />
-            <meshBasicMaterial color="#35cddd" />
+          <mesh
+            position={[-0.92 - windLength / 2, -0.02, 0]}
+            rotation={[0, 0, Math.PI / 2]}
+            onClick={(event) => {
+              event.stopPropagation()
+              onSelect('Entrada de ventilación impuesta', `${ventilationMs.toFixed(2)} m/s es un indicador ilustrativo seleccionado por el usuario. La escena no calcula el flujo resultante ni la respuesta de la llama.`)
+            }}
+          >
+            <cylinderGeometry args={[0.014, 0.014, windLength, 8]} />
+            <meshBasicMaterial color="#ffc06d" />
           </mesh>
-          <mesh position={[0.95, 1.04, 0]}>
-            <coneGeometry args={[0.075, 0.2, 10]} />
-            <meshBasicMaterial color="#35cddd" />
-          </mesh>
-          <mesh position={[0.96, 1.48, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.72, 7]} />
-            <meshBasicMaterial color="#6ee3ea" transparent opacity={0.28} />
-          </mesh>
-        </>
-      ) : (
-        <>
-          <mesh position={[0.98, 0.2, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.16, 8]} />
-            <meshBasicMaterial color="#35cddd" transparent opacity={0.55} />
-          </mesh>
-          <mesh position={[0.98, 0.36, 0]}>
-            <coneGeometry args={[0.06, 0.13, 10]} />
-            <meshBasicMaterial color="#35cddd" transparent opacity={0.55} />
+          <mesh position={[-0.92 - windLength, -0.02, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <coneGeometry args={[0.07, 0.18, 10]} />
+            <meshBasicMaterial color="#ffc06d" />
           </mesh>
         </>
       )}
-      <mesh position={[-0.95 - windLength / 2, -0.02, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.014, 0.014, windLength, 8]} />
-        <meshBasicMaterial color="#ffc06d" />
-      </mesh>
-      <mesh position={[-0.95 - windLength, -0.02, 0]} rotation={[0, 0, Math.PI / 2]}>
-        <coneGeometry args={[0.07, 0.18, 10]} />
-        <meshBasicMaterial color="#ffc06d" />
-      </mesh>
     </group>
   )
 }
 
-function ComparisonScene({ mode, parameters, elapsedSeconds, onSelect }) {
+function ComparisonScene({
+  scenario,
+  gravityLevel,
+  parameters,
+  elapsedSeconds,
+  playing,
+  playbackRate,
+  overlays,
+  onSelect
+}) {
+  const simulationTime = useSimulationClock(playing, elapsedSeconds, playbackRate)
   const diameter = dropletDiameter(parameters, elapsedSeconds)
   const radius = Math.max(0.015, diameter * 0.13)
   return (
@@ -566,30 +776,57 @@ function ComparisonScene({ mode, parameters, elapsedSeconds, onSelect }) {
       <directionalLight position={[4, 5, 3]} intensity={1.5} color="#ffe2c0" />
       <pointLight position={[-1, 1, 1]} intensity={5} distance={5} color="#ff8745" />
       <gridHelper args={[5, 20, '#234456', '#172b3e']} position={[0, -0.9, 0]} />
-      <mesh position={[0, -0.62, 0]} onClick={(event) => {
-        event.stopPropagation()
-        onSelect('Liquid fuel droplet', `Idealized d²-law diameter at t = ${elapsedSeconds.toFixed(1)} s: ${diameter.toFixed(2)} mm. The user-selected coefficient is illustrative, not fitted to a FLEX test.`)
-      }}>
-        <sphereGeometry args={[radius, 28, 20]} />
-        <meshPhysicalMaterial color="#4fd7e2" roughness={0.22} metalness={0.08} clearcoat={0.8} />
-      </mesh>
-      <group position={[0, -0.62 + radius + 0.05, 0]} onClick={(event) => {
-        event.stopPropagation()
-        onSelect(
-          mode === 'earth' ? 'Earth-gravity transport context' : 'Idealized microgravity transport context',
-          mode === 'earth'
-            ? 'The upward cue indicates the direction of buoyancy-driven natural convection qualitatively. No flow field or flame response is calculated.'
-            : 'The shortened gravity cue indicates the idealized g = 0 comparison. Diffusion and imposed ventilation remain possible; no transport field is calculated.'
-        )
-      }}>
+      {scenario === 'droplet' ? (
+        <mesh position={[0, -0.62, 0]} onClick={(event) => {
+          event.stopPropagation()
+          onSelect('Gota de combustible líquido', `Diámetro idealizado según la ley d² en t = ${elapsedSeconds.toFixed(1)} s: ${diameter.toFixed(2)} mm. K es un coeficiente seleccionado por el usuario; no se ajustó a un ensayo FLEX.`)
+        }}>
+          <sphereGeometry args={[radius, 28, 20]} />
+          <meshPhysicalMaterial color="#4fd7e2" roughness={0.22} metalness={0.08} clearcoat={0.8} />
+        </mesh>
+      ) : (
+        <group onClick={(event) => {
+          event.stopPropagation()
+          onSelect('Esquema de vela y mecha', 'La vela es solo una referencia geométrica. No se modelan la vaporización del combustible, el comportamiento de la mecha, la química de combustión ni la física de propagación de llama.')
+        }}>
+          <mesh position={[0, -0.83, 0]}>
+            <cylinderGeometry args={[0.24, 0.27, 0.12, 24]} />
+            <meshStandardMaterial color="#526779" metalness={0.55} roughness={0.42} />
+          </mesh>
+          <mesh position={[0, -0.7, 0]}>
+            <cylinderGeometry args={[0.026, 0.026, 0.18, 10]} />
+            <meshStandardMaterial color="#d4c6a9" roughness={0.8} />
+          </mesh>
+        </group>
+      )}
+      <group
+        position={scenario === 'droplet' ? [0, -0.62 + radius + 0.05, 0] : [0, 0, 0]}
+        onClick={(event) => {
+          event.stopPropagation()
+          onSelect(
+            scenario === 'droplet' ? 'Envolvente de llama de la gota' : 'Envolvente de llama de la vela',
+            `Esta forma conceptual de llama cambia continuamente con la entrada de gravedad seleccionada (${gravityLevel.toFixed(2)} g). Es una correspondencia visual, no una dimensión de llama calculada ni un experimento validado.`
+          )
+        }}
+      >
         <CombustionEnvelope
-          mode={mode}
-          radius={Math.max(radius, 0.18)}
+          scenario={scenario}
+          gravityLevel={gravityLevel}
+          radius={scenario === 'droplet' ? Math.max(radius, 0.18) : 0.3}
           oxygenPercent={parameters.oxygenPercent}
           ambientTemperatureK={parameters.ambientTemperatureK}
+          overlays={overlays}
+          playing={playing}
+          simulationTime={simulationTime}
         />
       </group>
-      <TransportCue mode={mode} ventilationMs={parameters.ventilationMs} />
+      <TransportCue
+        gravityLevel={gravityLevel}
+        ventilationMs={parameters.ventilationMs}
+        overlays={overlays}
+        simulationTime={simulationTime}
+        onSelect={onSelect}
+      />
       <mesh position={[0, -0.9, 0]}>
         <torusGeometry args={[0.35, 0.01, 6, 42]} />
         <meshBasicMaterial color="#35cddd" transparent opacity={0.38} />
@@ -598,13 +835,54 @@ function ComparisonScene({ mode, parameters, elapsedSeconds, onSelect }) {
   )
 }
 
-function ComparisonChart({ data, currentDiameter, elapsedSeconds, duration }) {
+function ComparisonChart({
+  scenario,
+  data,
+  renderingData,
+  currentDiameter,
+  elapsedSeconds,
+  duration,
+  gravityLevel
+}) {
+  if (scenario === 'candle') {
+    return (
+      <section className="comparison-chart-panel" aria-label="Mapa conceptual de visualización de la vela">
+        <div className="experience-panel-heading">
+          <div>
+            <span className="panel-kicker">MAPA CONCEPTUAL DE VISUALIZACIÓN · NO ES UNA SALIDA FÍSICA</span>
+            <h3>Entrada de gravedad e indicadores visuales</h3>
+          </div>
+          <strong>{gravityLevel.toFixed(2)} g</strong>
+        </div>
+        <div className="comparison-chart-canvas">
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={renderingData} margin={{ top: 10, right: 14, left: 2, bottom: 8 }}>
+              <CartesianGrid stroke="#243449" strokeDasharray="3 5" />
+              <XAxis dataKey="gravity" type="number" domain={[0, 1]} stroke="#8293a8" tick={{ fontSize: 10 }} />
+              <YAxis domain={[0, 'auto']} stroke="#8293a8" tick={{ fontSize: 10 }} width={45} />
+              <Tooltip
+                contentStyle={{ background: '#101a29', border: '1px solid #344a61', borderRadius: 6, fontSize: 11 }}
+                labelFormatter={(value) => `${Number(value).toFixed(2)} g`}
+                formatter={(value) => [Number(value).toFixed(2), 'Indicador visual (adimensional)']}
+              />
+              <Legend wrapperStyle={{ fontSize: 10, color: '#b8c5d5' }} />
+              <ReferenceLine x={gravityLevel} stroke="#ffd08a" strokeDasharray="3 4" />
+              <Line type="monotone" dataKey="shapeCue" name="Correspondencia de forma de la envolvente" stroke="#ff9a5c" strokeWidth={2.2} dot={false} isAnimationActive={false} />
+              <Line type="monotone" dataKey="buoyancyCue" name="Correspondencia del indicador de flotabilidad" stroke="#35cddd" strokeWidth={1.8} strokeDasharray="5 4" dot={false} isAnimationActive={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+        <p className="lab-chart-caveat">Estas curvas adimensionales muestran cómo responde la visualización al control de gravedad; no son predicciones de altura de llama, mediciones ni relaciones físicas validadas.</p>
+      </section>
+    )
+  }
+
   return (
-    <section className="comparison-chart-panel" aria-label="Simplified droplet diameter versus time">
+    <section className="comparison-chart-panel" aria-label="Diámetro simplificado de la gota en función del tiempo">
       <div className="experience-panel-heading">
         <div>
-          <span className="panel-kicker">CALCULATED MODEL OUTPUT · NOT EXPERIMENTAL DATA</span>
-          <h3>Idealized droplet diameter</h3>
+          <span className="panel-kicker">SALIDA CALCULADA DEL MODELO · NO SON DATOS EXPERIMENTALES</span>
+          <h3>Diámetro idealizado de la gota</h3>
         </div>
         <strong>{currentDiameter.toFixed(2)} mm</strong>
       </div>
@@ -621,12 +899,69 @@ function ComparisonChart({ data, currentDiameter, elapsedSeconds, duration }) {
             />
             <Legend wrapperStyle={{ fontSize: 10, color: '#b8c5d5' }} />
             <ReferenceLine x={elapsedSeconds} stroke="#ffd08a" strokeDasharray="3 4" />
-            <Line type="monotone" dataKey="earth" name="Earth · d² model" stroke="#ff9a5c" strokeWidth={2.2} dot={false} isAnimationActive={false} />
-            <Line type="monotone" dataKey="microgravity" name="Microgravity · same d² model" stroke="#35cddd" strokeWidth={1.8} strokeDasharray="5 4" dot={false} isAnimationActive={false} />
+            <Line type="monotone" dataKey="earth" name="Tierra · modelo d²" stroke="#ff9a5c" strokeWidth={2.2} dot={false} isAnimationActive={false} />
+            <Line type="monotone" dataKey="microgravity" name="Gravedad seleccionada · mismo modelo d²" stroke="#35cddd" strokeWidth={1.8} strokeDasharray="5 4" dot={false} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="lab-chart-caveat">The lines coincide because gravity is not a term in the selected d² relation. This is a declared model limitation, not evidence that real droplet burning rates are equal in both environments.</p>
+      <p className="lab-chart-caveat">Las líneas coinciden porque la gravedad no forma parte de la relación d² seleccionada. Esta es una limitación declarada del modelo, no evidencia de que las velocidades reales de combustión de gotas sean iguales en distintas condiciones de gravedad.</p>
+    </section>
+  )
+}
+
+function gravityCueLabel(gravityLevel) {
+  if (gravityLevel <= 0.03) return 'Flotabilidad suprimida en este límite idealizado'
+  if (gravityLevel < 0.2) return 'Indicador de flotabilidad reducida'
+  if (gravityLevel < 0.7) return 'Indicador de flotabilidad intermedia'
+  return 'Indicador de flotabilidad similar a la terrestre'
+}
+
+function flameShapeLabel(scenario, gravityLevel) {
+  if (gravityLevel <= 0.03) return scenario === 'candle' ? 'Envolvente compacta y redondeada' : 'Envolvente casi esférica'
+  if (gravityLevel >= 0.7) return scenario === 'candle' ? 'Indicador de penacho alargado' : 'Indicador de penacho asimétrico'
+  return 'Forma conceptual intermedia'
+}
+
+function ComparisonReadout({ scenario, gravityLevel, ventilationMs }) {
+  const selectedGravity = gravityLevel.toFixed(2)
+  const selectedShape = flameShapeLabel(scenario, gravityLevel)
+  const selectedBuoyancy = gravityCueLabel(gravityLevel)
+  const selectedTransport = gravityLevel <= 0.03
+    ? 'Difusión y ventilación impuesta; flotabilidad suprimida'
+    : 'Difusión, ventilación impuesta e indicador de flotabilidad'
+  const rows = [
+    ['Geometría de la llama', 'Indicador alargado / asimétrico', selectedShape],
+    ['Flotabilidad', 'Indicador de referencia terrestre', selectedBuoyancy],
+    ['Transporte mostrado', 'Flotabilidad + difusión + flujo impuesto', selectedTransport],
+    ['Simetría', 'Esquema potencialmente asimétrico', gravityLevel <= 0.03 ? 'Esquema más simétrico radialmente' : 'Esquema intermedio'],
+    ['Comportamiento del hollín', 'No se calcula; marcadores simbólicos opcionales', 'No se calcula; marcadores simbólicos opcionales'],
+    ['Transferencia de calor', 'No se resuelve; solo indicador de color opcional', 'No se resuelve; solo indicador de color opcional'],
+    ['Implicación científica', 'No representa el comportamiento a gravedad reducida', 'La visualización no predice resultados experimentales']
+  ]
+  return (
+    <section className="gravity-comparison-readout" aria-label="Comparación cualitativa entre la Tierra y la gravedad seleccionada">
+      <div className="experience-panel-heading">
+        <div>
+          <span className="panel-kicker">COMPARACIÓN EN TIEMPO REAL · SOLO INDICADORES CUALITATIVOS</span>
+          <h3>{scenario === 'candle' ? 'Llama de vela' : 'Combustión de gotas'}: referencia terrestre y condición seleccionada</h3>
+        </div>
+        <span className="gravity-input-tag">{selectedGravity} g seleccionada</span>
+      </div>
+      <div className="gravity-readout-table" role="table" aria-label="Comparación cualitativa entre la referencia terrestre y la condición de gravedad seleccionada">
+        <div className="gravity-readout-row is-header" role="row">
+          <span role="columnheader">Aspecto</span>
+          <strong role="columnheader">Tierra · 1,00 g</strong>
+          <strong role="columnheader">Seleccionada · {selectedGravity} g</strong>
+        </div>
+        {rows.map(([aspect, earth, selected]) => (
+          <div className="gravity-readout-row" role="row" key={aspect}>
+            <span role="rowheader">{aspect}</span>
+            <span role="cell">{earth}</span>
+            <span role="cell">{selected}</span>
+          </div>
+        ))}
+      </div>
+      <p className="lab-chart-caveat">Ambas escenas usan la misma entrada de flujo impuesto de {ventilationMs.toFixed(2)} m/s. Los indicadores de geometría y transporte son ilustrativos; no se calculan resultados de hollín, transferencia de calor, transporte de especies ni propagación de llama.</p>
     </section>
   )
 }
@@ -654,35 +989,44 @@ function ParameterSlider({ label, value, min, max, step, unit, onChange, help })
 
 const variableDetails = {
   diameterMm: {
-    label: 'Droplet diameter',
-    detail: 'Initial diameter D₀ defines the droplet scale and the starting value in the displayed d² relation. Current diameter is calculated from the selected coefficient and elapsed time.'
+    label: 'Diámetro de la gota',
+    detail: 'El diámetro inicial D₀ define la escala de la gota y el valor inicial de la relación d² mostrada. El diámetro actual se calcula con el coeficiente seleccionado y el tiempo transcurrido.'
   },
   evaporationK: {
-    label: 'Illustrative coefficient K',
-    detail: 'K in mm²/s is freely selected for this demonstration; it is not measured or fitted to FLEX/FLEX-2 data. Changing K changes the modelled diameter curve in both panels equally.'
+    label: 'Coeficiente ilustrativo K',
+    detail: 'El valor de K en mm²/s se selecciona libremente para esta demostración; no se midió ni se ajustó con datos de FLEX/FLEX-2. Al cambiar K, la curva de diámetro del modelo cambia por igual en ambos paneles.'
   },
   ambientTemperatureK: {
-    label: 'Ambient temperature input',
-    detail: 'This input changes the scene color cue only. Droplet temperature, flame temperature, heat transfer, and chemical reaction rates are not calculated.'
+    label: 'Entrada de temperatura ambiente',
+    detail: 'Esta entrada solo modifica el indicador de color de la escena. No se calculan la temperatura de la gota, la temperatura de la llama, la transferencia de calor ni las velocidades de reacción química.'
   },
   oxygenPercent: {
-    label: 'Oxygen fraction input',
-    detail: 'This input changes flame-envelope visual emphasis only. No flammability limit, oxygen threshold, or burning-rate response is inferred.'
+    label: 'Entrada de fracción de oxígeno',
+    detail: 'Esta entrada solo modifica el énfasis visual de la envolvente de la llama. No se infieren límites de inflamabilidad, umbrales de oxígeno ni respuestas de velocidad de combustión.'
   },
   ventilationMs: {
-    label: 'Imposed ventilation input',
-    detail: 'This input changes the drawn airflow cue in both scenes. It is not a calculated flow field and does not change the d² model.'
+    label: 'Entrada de ventilación impuesta',
+    detail: 'Esta entrada modifica el indicador de flujo de aire dibujado en ambas escenas. No es un campo de flujo calculado ni cambia el modelo d².'
   },
   gravity: {
-    label: 'Gravity context',
-    detail: 'The Earth panel uses 9.81 m/s²; the comparison panel uses an idealized g = 0 m/s² limit. Zero-g here does not mean gases are motionless: diffusion and imposed flow remain possible.'
+    label: 'Control de gravedad',
+    detail: 'La escena terrestre permanece como referencia de 1 g. Este control modifica continuamente la entrada de gravedad de la segunda escena; solo ajusta la geometría conceptual y un indicador de flotabilidad, no resuelve físicamente la llama.'
+  },
+  flameMode: {
+    label: 'Escenario',
+    detail: 'Cambia entre una gota de combustible líquido y un esquema de vela. La vela no incluye la física de la mecha, la vaporización ni la propagación de llama.'
   }
 }
 
 function ComparisonScenePanel({
   mode,
+  scenario,
+  gravityLevel,
   parameters,
   elapsedSeconds,
+  playing,
+  playbackRate,
+  overlays,
   onSelect,
   controlsRef,
   cameraControls,
@@ -692,30 +1036,38 @@ function ComparisonScenePanel({
   syncGuard
 }) {
   const isEarth = mode === 'earth'
-  const title = isEarth ? 'A · EARTH GRAVITY' : 'B · IDEALIZED MICROGRAVITY'
-  const gravity = isEarth ? '9.81 m/s²' : '0 m/s²'
+  const sceneGravity = isEarth ? 1 : gravityLevel
+  const gravity = `${sceneGravity.toFixed(2)} g · ${(sceneGravity * 9.81).toFixed(2)} m/s²`
+  const title = isEarth ? 'A · REFERENCIA TERRESTRE' : 'B · GRAVEDAD SELECCIONADA'
+  const scenarioLabel = scenario === 'candle' ? 'VELA' : 'GOTA'
+  const sceneCue = flameShapeLabel(scenario, sceneGravity).toUpperCase()
+  const currentDiameter = dropletDiameter(parameters, elapsedSeconds)
   return (
     <section className={`gravity-scene-panel gravity-scene-${mode}`} aria-label={title}>
       <div className="gravity-scene-heading">
         <div>
           <span className="panel-kicker">{title}</span>
-          <h3>{isEarth ? 'Buoyancy-driven context' : 'Diffusion & imposed-flow context'}</h3>
+          <h3>{scenario === 'candle' ? (isEarth ? 'Referencia de llama a 1 g' : 'Condición seleccionada de la vela') : (isEarth ? 'Gota · referencia de 1 g' : 'Gota · condición seleccionada')}</h3>
         </div>
         <span className="gravity-input-tag">g = {gravity}</span>
       </div>
       <div className="experience-canvas gravity-canvas">
-        <div className="experience-scene-label">{isEarth ? 'VERTICAL PLUME · SCHEMATIC' : 'APPROXIMATELY SPHERICAL · SCHEMATIC'}</div>
-        <SceneBoundary fallback={<div className="experience-webgl-fallback">3D rendering is unavailable. Use the model, comparison chart, and scientific notes below.</div>}>
+        <div className="experience-scene-label">{scenarioLabel} · {sceneCue} · CONCEPTUAL</div>
+        <SceneBoundary fallback={<div className="experience-webgl-fallback">La visualización 3D no está disponible. Usa el modelo, la gráfica comparativa y las notas científicas de abajo.</div>}>
           <Canvas
             camera={{ position: [3.8, 2.7, 4.8], fov: 42 }}
             dpr={[1, 1.25]}
             gl={{ antialias: true, alpha: false, powerPreference: 'low-power' }}
-            fallback={<div className="experience-webgl-fallback">WebGL is unavailable in this browser.</div>}
+            fallback={<div className="experience-webgl-fallback">WebGL no está disponible en este navegador.</div>}
           >
             <ComparisonScene
-              mode={mode}
+              scenario={scenario}
+              gravityLevel={sceneGravity}
               parameters={parameters}
               elapsedSeconds={elapsedSeconds}
+              playing={playing}
+              playbackRate={playbackRate}
+              overlays={overlays}
               onSelect={onSelect}
             />
             <CameraControls
@@ -729,38 +1081,43 @@ function ComparisonScenePanel({
           </Canvas>
         </SceneBoundary>
         <button type="button" className="experience-camera-reset" onClick={() => controlsRef.current?.reset()}>
-          <RotateCcw size={12} /> Reset camera
+          <RotateCcw size={12} /> Restablecer cámara
         </button>
-        <div className="gravity-scene-scale">Same initial droplet · same selected ambient inputs</div>
+        <div className="gravity-scene-scale">Mismo escenario y entradas ambientales · solo correspondencia visual</div>
       </div>
       <div className="gravity-scene-readout">
-        <span><i className={isEarth ? 'gravity-dot earth-dot' : 'gravity-dot micro-dot'} /> {isEarth ? 'Natural convection can be buoyancy-driven' : 'Natural buoyancy is absent in the idealized limit'}</span>
-        <span><Thermometer size={11} /> {parameters.ambientTemperatureK} K ambient input</span>
-        <strong>d(t) = {dropletDiameter(parameters, elapsedSeconds).toFixed(2)} mm</strong>
+        <span><i className={isEarth ? 'gravity-dot earth-dot' : 'gravity-dot micro-dot'} /> {gravityCueLabel(sceneGravity)}</span>
+        <span><Thermometer size={11} /> Entrada de temperatura ambiente: {parameters.ambientTemperatureK} K</span>
+        {scenario === 'droplet' && <strong>d(t) = {currentDiameter.toFixed(2)} mm</strong>}
       </div>
     </section>
   )
 }
 
-function ComparisonDataTable({ parameters, elapsedSeconds }) {
+function ComparisonDataTable({ scenario, gravityLevel, parameters, elapsedSeconds }) {
   const diameter = dropletDiameter(parameters, elapsedSeconds)
   const dataRows = [
-    ['Gravity input', '9.81 m/s²', '0 m/s² (idealized)'],
-    ['Initial droplet diameter', `${parameters.diameterMm.toFixed(1)} mm`, `${parameters.diameterMm.toFixed(1)} mm`],
-    ['Illustrative d² coefficient, K', `${parameters.evaporationK.toFixed(2)} mm²/s`, `${parameters.evaporationK.toFixed(2)} mm²/s`],
-    ['Current model diameter', `${diameter.toFixed(2)} mm`, `${diameter.toFixed(2)} mm`],
-    ['Ambient temperature input', `${parameters.ambientTemperatureK} K`, `${parameters.ambientTemperatureK} K`],
-    ['Oxygen fraction input', `${parameters.oxygenPercent.toFixed(1)} % vol`, `${parameters.oxygenPercent.toFixed(1)} % vol`],
-    ['Imposed ventilation input', `${parameters.ventilationMs.toFixed(2)} m/s`, `${parameters.ventilationMs.toFixed(2)} m/s`]
+    ['Entrada de gravedad', '1,00 g · 9,81 m/s²', `${gravityLevel.toFixed(2)} g · ${(gravityLevel * 9.81).toFixed(2)} m/s²`],
+    ['Escenario', scenario === 'droplet' ? 'Gota de combustible líquido' : 'Esquema de vela y mecha', scenario === 'droplet' ? 'Gota de combustible líquido' : 'Esquema de vela y mecha'],
+    ['Entrada de temperatura ambiente', `${parameters.ambientTemperatureK} K`, `${parameters.ambientTemperatureK} K`],
+    ['Entrada de fracción de oxígeno', `${parameters.oxygenPercent.toFixed(1)} % vol`, `${parameters.oxygenPercent.toFixed(1)} % vol`],
+    ['Entrada de ventilación impuesta', `${parameters.ventilationMs.toFixed(2)} m/s`, `${parameters.ventilationMs.toFixed(2)} m/s`]
   ]
+  if (scenario === 'droplet') {
+    dataRows.splice(2, 0,
+      ['Diámetro inicial de la gota, D₀', `${parameters.diameterMm.toFixed(1)} mm`, `${parameters.diameterMm.toFixed(1)} mm`],
+      ['Coeficiente d² ilustrativo, K', `${parameters.evaporationK.toFixed(2)} mm²/s`, `${parameters.evaporationK.toFixed(2)} mm²/s`],
+      ['Diámetro actual del modelo', `${diameter.toFixed(2)} mm`, `${diameter.toFixed(2)} mm`]
+    )
+  }
   return (
     <section className="gravity-data-panel">
       <div className="experience-panel-heading">
-        <div><span className="panel-kicker">SHARED INITIAL CONDITIONS</span><h3>Input and model-output table</h3></div>
+        <div><span className="panel-kicker">CONDICIONES INICIALES COMPARTIDAS</span><h3>Entradas y salidas declaradas del modelo</h3></div>
       </div>
-      <div className="twin-comparison-table" role="table" aria-label="Earth and idealized microgravity inputs and model outputs">
+      <div className="twin-comparison-table" role="table" aria-label="Entradas y salidas del modelo para la referencia terrestre y la gravedad seleccionada">
         <div className="twin-comparison-row header" role="row">
-          <span role="columnheader">Variable</span><strong role="columnheader">Earth gravity</strong><strong role="columnheader">Idealized microgravity</strong>
+          <span role="columnheader">Variable</span><strong role="columnheader">Referencia terrestre</strong><strong role="columnheader">Condición seleccionada</strong>
         </div>
         {dataRows.map(([name, earth, micro]) => (
           <div className="twin-comparison-row" role="row" key={name}>
@@ -768,7 +1125,7 @@ function ComparisonDataTable({ parameters, elapsedSeconds }) {
           </div>
         ))}
       </div>
-      <p className="lab-chart-caveat">The model output is the same in both columns because this simplified diameter law does not include gravity or transport. The different scene cues are qualitative and do not claim calculated flame dimensions or measured results.</p>
+      <p className="lab-chart-caveat">{scenario === 'droplet' ? 'El diámetro es idéntico en ambas columnas porque la relación d² seleccionada no incluye términos de gravedad ni de transporte. Esta es una limitación del modelo, no evidencia de que las velocidades reales de combustión de gotas sean iguales.' : 'La escena de la vela no tiene salidas físicas calculadas. Sus indicadores de forma y flujo son correspondencias visuales cualitativas, no dimensiones de llama medidas ni predicciones.'}</p>
     </section>
   )
 }
@@ -781,6 +1138,9 @@ export function MicrogravityLab() {
   const [syncEnabled, setSyncEnabled] = React.useState(true)
   const [sceneView, setSceneView] = React.useState('split')
   const [panelView, setPanelView] = React.useState('scenes')
+  const [scenario, setScenario] = React.useState('droplet')
+  const [gravityLevel, setGravityLevel] = React.useState(0)
+  const [overlays, setOverlays] = React.useState(overlayDefaults)
   const [selectedVariable, setSelectedVariable] = React.useState('gravity')
   const [selectedPart, setSelectedPart] = React.useState(null)
   const earthControls = React.useRef(null)
@@ -796,7 +1156,9 @@ export function MicrogravityLab() {
   }, [])
   const syncGuard = React.useRef(false)
   const elapsedRef = React.useRef(0)
-  const duration = Math.max(0.1, (parameters.diameterMm ** 2) / parameters.evaporationK)
+  const duration = scenario === 'droplet'
+    ? Math.max(0.1, (parameters.diameterMm ** 2) / parameters.evaporationK)
+    : 60
   const currentDiameter = dropletDiameter(parameters, elapsedSeconds)
   const chartData = React.useMemo(
     () => Array.from({ length: 51 }, (_, index) => {
@@ -806,17 +1168,26 @@ export function MicrogravityLab() {
     }),
     [duration, parameters]
   )
+  const renderingData = React.useMemo(
+    () => Array.from({ length: 21 }, (_, index) => {
+      const gravity = index / 20
+      return { gravity, shapeCue: 0.82 + gravity * 1.42, buoyancyCue: gravity }
+    }),
+    []
+  )
 
   React.useEffect(() => {
     if (!playing) return undefined
     const timer = window.setInterval(() => {
-      const next = Math.min(duration, elapsedRef.current + 0.1 * playbackRate)
+      const next = scenario === 'droplet'
+        ? Math.min(duration, elapsedRef.current + 0.1 * playbackRate)
+        : (elapsedRef.current + 0.1 * playbackRate) % duration
       elapsedRef.current = next
       setElapsedSeconds(next)
-      if (next >= duration) setPlaying(false)
+      if (scenario === 'droplet' && next >= duration) setPlaying(false)
     }, 100)
     return () => window.clearInterval(timer)
-  }, [duration, playbackRate, playing])
+  }, [duration, playbackRate, playing, scenario])
 
   function updateParameter(key, value) {
     const updated = { ...parameters, [key]: value }
@@ -846,109 +1217,235 @@ export function MicrogravityLab() {
 
   function restoreDefaults() {
     setParameters({ ...comparisonDefaults })
+    setScenario('droplet')
+    setGravityLevel(0)
+    setOverlays({ ...overlayDefaults })
+    setSelectedVariable('gravity')
+    setSelectedPart(null)
+    setSceneView('split')
+    setSyncEnabled(true)
     resetTime()
   }
 
   const shownScenes = sceneView === 'split' ? ['earth', 'microgravity'] : [sceneView]
+  const variableOptions = Object.entries(variableDetails).filter(([key]) => (
+    scenario === 'droplet' || (key !== 'diameterMm' && key !== 'evaporationK')
+  ))
+  const selectedVariableDetail = variableDetails[selectedVariable]
   const detail = selectedPart
     ? { label: selectedPart.label, text: selectedPart.description }
-    : variableDetails[selectedVariable]
+    : selectedVariableDetail
+  const overlayOptions = [
+    { key: 'flameStructure',     label: 'Capas de la envolvente de llama', color: '#ff9a5c' },
+    { key: 'buoyancyFlow',     label: 'Indicador de flujo por flotabilidad', color: '#ffc06d' },
+    { key: 'massTransfer',     label: 'Indicador de difusión / transferencia de masa', color: '#35cddd' },
+    { key: 'thermalCue',     label: 'Indicador de color térmico', color: '#ff795d' },
+    { key: 'sootMarkers',     label: 'Marcadores simbólicos de hollín', color: '#8998a7' }
+  ]
 
   return (
     <section className="module-page ignis-experience">
       <PageHeader
-        kicker="MICROGRAVITY VS EARTH LAB · COMPARATIVE MODEL"
-        title="One droplet. Two transport environments."
-        description="Compare a conceptual droplet flame under Earth gravity and an idealized zero-g limit, with shared initial inputs and a transparent simplified diameter model."
+        kicker="LABORATORIO DE GRAVEDAD IGNIS · VISUALIZACIÓN COMPARATIVA"
+        title="Cómo la gravedad modifica la combustión"
+        description="Explora escenas conceptuales 3D emparejadas de combustión de gotas y llamas de vela. Mantén una referencia terrestre junto a una condición de gravedad ajustable, con límites explícitos entre los indicadores visuales y las salidas calculadas."
       />
 
-      <div className="experience-links" aria-label="Connected IGNIS experiences">
-        <a href="#digital-twin"><Activity size={14} /> Open habitat digital twin <ArrowRight size={13} /></a>
-        <a href="#experiments-lab"><Flame size={14} /> Explore all combustion models <ArrowRight size={13} /></a>
-        <a href="#assistant"><BookOpen size={14} /> Investigate with IGNIS AI <ArrowRight size={13} /></a>
+      <div className="experience-links" aria-label="Experiencias de IGNIS conectadas">
+        <a href="#digital-twin"><Activity size={14} /> Abrir gemelo digital del hábitat <ArrowRight size={13} /></a>
+        <a href="#experiments-lab"><Flame size={14} /> Explorar experimentos documentados <ArrowRight size={13} /></a>
+        <a href="#research"><BookOpen size={14} /> Buscar evidencia de investigación <ArrowRight size={13} /></a>
+        <a href="#assistant"><BookOpen size={14} /> Investigar con IGNIS IA <ArrowRight size={13} /></a>
       </div>
 
       <div className="gravity-workspace">
         <aside className="gravity-controls-panel">
           <div className="experience-panel-heading">
-            <div><span className="panel-kicker">SHARED EXPERIMENT INPUTS</span><h3>Matched conditions</h3></div>
+            <div><span className="panel-kicker">CONTROLES DEL LABORATORIO DE GRAVEDAD</span><h3>Configurar una comparación</h3></div>
             <SlidersHorizontal size={17} />
           </div>
-          <div className="gravity-input-lock"><Check size={13} /> Both environments share these inputs</div>
+
+          <div className="gravity-scenario-picker" role="group" aria-label="Elegir un escenario conceptual de llama">
+            <button
+              type="button"
+              className={scenario === 'droplet' ? 'selected' : ''}
+              aria-pressed={scenario === 'droplet'}
+              onClick={() => {
+                setScenario('droplet')
+                setSelectedVariable('gravity')
+                setSelectedPart(null)
+                resetTime()
+              }}
+            >
+              <Droplets size={15} /> Combustión de gotas
+            </button>
+            <button
+              type="button"
+              className={scenario === 'candle' ? 'selected' : ''}
+              aria-pressed={scenario === 'candle'}
+              onClick={() => {
+                setScenario('candle')
+                setSelectedVariable('gravity')
+                setSelectedPart(null)
+                resetTime()
+              }}
+            >
+              <Flame size={15} /> Llama de vela
+            </button>
+          </div>
+          <p className="gravity-control-note">Ambas escenas comparten el escenario y las entradas ambientales. La escena izquierda permanece en 1 g; la derecha sigue este control de gravedad.</p>
+
+          <section className="gravity-control-section" aria-labelledby="gravity-slider-heading">
+            <div className="gravity-control-heading">
+              <div>
+                <span className="panel-kicker">ENTRADA CONTINUA DE GRAVEDAD</span>
+                <h4 id="gravity-slider-heading">Condición seleccionada</h4>
+              </div>
+              <output htmlFor="gravity-level-slider">{gravityLevel.toFixed(2)} g · {(gravityLevel * 9.81).toFixed(2)} m/s²</output>
+            </div>
+            <label className="gravity-range-label" htmlFor="gravity-level-slider">
+              <span>0 g</span><span>1 g</span>
+            </label>
+            <input
+              id="gravity-level-slider"
+              className="gravity-range-input"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={gravityLevel}
+              onChange={(event) => {
+                setGravityLevel(Number(event.target.value))
+                setSelectedPart(null)
+              }}
+              aria-label="Gravedad seleccionada como fracción de la gravedad terrestre"
+              aria-valuetext={`${gravityLevel.toFixed(2)} veces la gravedad terrestre, ${(gravityLevel * 9.81).toFixed(2)} metros por segundo al cuadrado`}
+            />
+            <div className="gravity-preset-list" role="group" aria-label="Valores preestablecidos de gravedad">
+              {gravityPresets.map((preset) => (
+                <button
+                  type="button"
+                  key={preset.label}
+                  className={Math.abs(gravityLevel - preset.value) < 0.005 ? 'selected' : ''}
+                  aria-pressed={Math.abs(gravityLevel - preset.value) < 0.005}
+                  onClick={() => {
+                    setGravityLevel(preset.value)
+                    setSelectedPart(null)
+                  }}
+                >
+                  <span>{preset.label}</span><small>{preset.detail}</small>
+                </button>
+              ))}
+            </div>
+            <p className="gravity-control-note">Los valores preestablecidos son entradas aproximadas de gravedad superficial. El valor de la EEI es un límite idealizado de 0 g, no una representación de la aceleración residual.</p>
+          </section>
+
+          <div className="gravity-input-lock"><Check size={13} /> La referencia terrestre permanece fija en 1,00 g</div>
           <div className="gravity-parameter-list">
+            {scenario === 'droplet' && (
+              <>
+                <ParameterSlider
+                  label="Diámetro inicial de la gota, D₀"
+                  value={parameters.diameterMm}
+                  min={0.5}
+                  max={4}
+                  step={0.1}
+                  unit="mm"
+                  onChange={(value) => updateParameter('diameterMm', value)}
+                  help="Define el tamaño de la gota y D₀ en la relación d² simplificada."
+                />
+                <ParameterSlider
+                  label="Coeficiente ilustrativo de evaporación, K"
+                  value={parameters.evaporationK}
+                  min={0.02}
+                  max={0.5}
+                  step={0.01}
+                  unit="mm²/s"
+                  onChange={(value) => updateParameter('evaporationK', value)}
+                  help="Solo es una entrada del usuario; no se ajustó a un experimento FLEX/FLEX-2."
+                />
+              </>
+            )}
             <ParameterSlider
-              label="Initial droplet diameter, D₀"
-              value={parameters.diameterMm}
-              min={0.5}
-              max={4}
-              step={0.1}
-              unit="mm"
-              onChange={(value) => updateParameter('diameterMm', value)}
-              help="Sets the droplet size and D₀ in the simplified d² relation."
-            />
-            <ParameterSlider
-              label="Illustrative evaporation coefficient, K"
-              value={parameters.evaporationK}
-              min={0.02}
-              max={0.5}
-              step={0.01}
-              unit="mm²/s"
-              onChange={(value) => updateParameter('evaporationK', value)}
-              help="User input only; not fitted to a FLEX/FLEX-2 experiment."
-            />
-            <ParameterSlider
-              label="Ambient temperature input"
+              label="Entrada de temperatura ambiente"
               value={parameters.ambientTemperatureK}
               min={250}
               max={900}
               step={10}
               unit="K"
               onChange={(value) => updateParameter('ambientTemperatureK', value)}
-              help="Visual color cue only; temperature fields are not calculated."
+              help="Solo es un indicador visual de color; no se calculan campos de temperatura."
             />
             <ParameterSlider
-              label="Oxygen fraction input"
+              label="Entrada de fracción de oxígeno"
               value={parameters.oxygenPercent}
               min={12}
               max={24}
               step={0.1}
               unit="% vol"
               onChange={(value) => updateParameter('oxygenPercent', value)}
-              help="Visual envelope emphasis only; no flammability threshold is inferred."
+              help="Solo modifica el énfasis visual de la envolvente; no se infiere un umbral de inflamabilidad."
             />
             <ParameterSlider
-              label="Imposed ventilation input"
+              label="Entrada de ventilación impuesta"
               value={parameters.ventilationMs}
               min={0}
               max={0.5}
               step={0.01}
               unit="m/s"
               onChange={(value) => updateParameter('ventilationMs', value)}
-              help="Changes the drawn airflow cue; it does not calculate a flow field."
+              help="Cambia el indicador de flujo de aire dibujado; no calcula un campo de flujo."
             />
           </div>
+
+          <section className="gravity-overlay-control" aria-labelledby="gravity-overlay-heading">
+            <div className="experience-panel-heading">
+              <div><span className="panel-kicker">CAPAS VISUALES OPCIONALES</span><h3 id="gravity-overlay-heading">Capas de la escena</h3></div>
+              <Layers3 size={15} />
+            </div>
+            <div className="gravity-overlay-list">
+              {overlayOptions.map((overlay) => (
+                <button
+                  type="button"
+                  key={overlay.key}
+                  className={overlays[overlay.key] ? 'selected' : ''}
+                  aria-pressed={overlays[overlay.key]}
+                  onClick={() => {
+                    setOverlays((current) => ({ ...current, [overlay.key]: !current[overlay.key] }))
+                    setSelectedPart(null)
+                  }}
+                >
+                  <i style={{ '--overlay-color': overlay.color }} />
+                  <span>{overlay.label}</span>
+                  <small>{overlays[overlay.key] ? 'ACTIVADA' : 'DESACTIVADA'}</small>
+                </button>
+              ))}
+            </div>
+            <p className="gravity-control-note">Todas las capas son ayudas visuales. No muestran temperaturas medidas, concentración de especies, producción de hollín ni flujo calculado.</p>
+          </section>
+
           <div className="lab-playback-panel">
             <div className="lab-playback-status">
               <span className={playing ? 'lab-live-dot is-running' : 'lab-live-dot'} />
-              {playing ? 'RUNNING' : 'PAUSED'} · t = {elapsedSeconds.toFixed(1)} s
+              {playing ? 'ANIMANDO' : 'EN PAUSA'} · t = {elapsedSeconds.toFixed(1)} s
             </div>
             <div className="lab-playback-actions">
               <button type="button" onClick={() => {
                 if (!playing && elapsedSeconds >= duration) resetTime()
                 setPlaying((current) => !current)
-              }} aria-label={playing ? 'Pause comparison' : 'Start comparison'}>
-                {playing ? <Pause size={14} /> : <Play size={14} />}{playing ? 'Pause both' : 'Start both'}
+              }} aria-label={playing ? 'Pausar ambas escenas' : 'Animar ambas escenas'}>
+                {playing ? <Pause size={14} /> : <Play size={14} />}{playing ? 'Pausar escenas' : 'Animar escenas'}
               </button>
-              <button type="button" onClick={resetTime}><RotateCcw size={14} /> Restart</button>
+              <button type="button" onClick={resetTime}><RotateCcw size={14} /> Reiniciar tiempo</button>
             </div>
             <label className="lab-rate-control">
-              <span>Playback rate</span>
+              <span>Velocidad de reproducción</span>
               <select value={playbackRate} onChange={(event) => setPlaybackRate(Number(event.target.value))}>
                 <option value={0.5}>0.5×</option><option value={1}>1×</option><option value={2}>2×</option>
               </select>
             </label>
             <label className="gravity-timeline">
-              <span>Model time <output>{elapsedSeconds.toFixed(1)} s</output></span>
+              <span>{scenario === 'droplet' ? 'Tiempo del modelo' : 'Tiempo de animación'} <output>{elapsedSeconds.toFixed(1)} s</output></span>
               <input
                 type="range"
                 min={0}
@@ -956,48 +1453,49 @@ export function MicrogravityLab() {
                 step={Math.max(0.01, Math.min(1, duration / 100))}
                 value={elapsedSeconds}
                 onChange={(event) => updateTime(Number(event.target.value))}
-                aria-label="Model time in seconds"
+                aria-label="Tiempo del modelo en segundos"
               />
             </label>
           </div>
           <div className="lab-simulation-tools gravity-tools">
-            <button type="button" onClick={restoreDefaults}><RotateCcw size={14} /> Restore shared defaults</button>
+            <button type="button" onClick={restoreDefaults}><RotateCcw size={14} /> Restaurar valores predeterminados</button>
             <button
               type="button"
               className={syncEnabled ? 'selected' : ''}
               aria-pressed={syncEnabled}
               onClick={() => setSyncEnabled((current) => !current)}
             >
-              <Camera size={14} /> Camera sync: {syncEnabled ? 'on' : 'off'}
+              <Camera size={14} /> Sincronización de cámara: {syncEnabled ? 'activada' : 'desactivada'}
             </button>
           </div>
           <details className="lab-model-assumptions">
-            <summary>Equation, initial conditions, and limitations</summary>
-            <p><strong>Classification:</strong> simplified mathematical model (diameter only) plus conceptual transport visualization.</p>
-            <p><strong>Equation:</strong> D²(t) = max(D₀² − Kt, 0), using D in mm, t in seconds, and a user-selected K in mm²/s.</p>
-            <p><strong>Initial conditions:</strong> same D₀, K, ambient-temperature input, oxygen input, ventilation input, and t = 0 s for both scenes.</p>
-            <p><strong>Limitations:</strong> no chemistry, gas or droplet temperature, species diffusion, convective transport, radiation, soot, extinction, chamber boundaries, or gravity-dependent burning-rate closure is solved. The visuals do not depict validated test results.</p>
+            <summary>Clasificación y limitaciones del modelo</summary>
+            <p><strong>Clasificación:</strong> visualizaciones 3D conceptuales de llama y transporte. Solo en el modo de gota se muestra por separado una relación matemática simplificada para el diámetro.</p>
+            <p><strong>Ecuación (modo gota):</strong> D²(t) = máx(D₀² − Kt, 0), con D en mm, t en segundos y K seleccionado por el usuario en mm²/s. La ecuación no incluye la gravedad.</p>
+            <p><strong>Correspondencia de gravedad:</strong> el control de gravedad modifica continuamente la geometría conceptual de la envolvente y el indicador de flotabilidad. Estas correspondencias visuales no son un solucionador físico de llamas.</p>
+            <p><strong>Limitaciones:</strong> no se resuelven química, campo de temperatura, difusión de especies, transporte convectivo, radiación, formación de hollín, extinción, límites de la cámara ni una relación de velocidad de combustión dependiente de la gravedad. El modelo no está calibrado ni validado con experimentos.</p>
           </details>
         </aside>
 
         <div className="gravity-content-panel">
+          <div className="gravity-lab-status"><Info size={14} /><span><strong>VISUALIZACIÓN CONCEPTUAL</strong> · No es una simulación numérica validada; no se reproduce ningún experimento medido.</span></div>
           <div className="gravity-display-toolbar">
-            <div className="gravity-view-toggle" role="group" aria-label="Choose scene view">
+            <div className="gravity-view-toggle" role="group" aria-label="Elegir vista de escena">
               {[
-                ['split', 'Split view'],
-                ['earth', 'Earth only'],
-                ['microgravity', 'Microgravity only']
+                ['split', 'Vista dividida'],
+                ['earth', 'Solo la Tierra'],
+                ['microgravity', 'Solo la seleccionada']
               ].map(([value, label]) => (
                 <button type="button" key={value} className={sceneView === value ? 'selected' : ''} aria-pressed={sceneView === value} onClick={() => setSceneView(value)}>
                   {label}
                 </button>
               ))}
             </div>
-            <div className="gravity-panel-toggle" role="tablist" aria-label="Comparison output view">
+            <div className="gravity-panel-toggle" role="tablist" aria-label="Vista de resultados de comparación">
               {[
-                ['scenes', '3D scenes'],
-                ['graphs', 'Comparison graph'],
-                ['data', 'Data view']
+                ['scenes', 'Escenas 3D'],
+                ['graphs', 'Gráfica comparativa'],
+                ['data', 'Vista de datos']
               ].map(([value, label]) => (
                 <button type="button" role="tab" aria-selected={panelView === value} key={value} className={panelView === value ? 'selected' : ''} onClick={() => setPanelView(value)}>
                   {label}
@@ -1013,8 +1511,13 @@ export function MicrogravityLab() {
                   <ComparisonScenePanel
                     key={mode}
                     mode={mode}
+                    scenario={scenario}
+                    gravityLevel={gravityLevel}
                     parameters={parameters}
                     elapsedSeconds={elapsedSeconds}
+                    playing={playing}
+                    playbackRate={playbackRate}
+                    overlays={overlays}
                     onSelect={(label, description) => setSelectedPart({ label, description })}
                     controlsRef={mode === 'earth' ? earthControls : microControls}
                     cameraControls={cameraControls}
@@ -1025,7 +1528,19 @@ export function MicrogravityLab() {
                   />
                 ))}
               </div>
-              <div className="gravity-camera-hint"><Camera size={13} /> Drag to orbit · scroll to zoom · right-drag to pan</div>
+              <ComparisonReadout
+                scenario={scenario}
+                gravityLevel={gravityLevel}
+                ventilationMs={parameters.ventilationMs}
+              />
+              <div className="gravity-overlay-legend" aria-label="Active conceptual scene layers">
+                <span className="panel-kicker">INDICADORES VISUALES ACTIVOS</span>
+                {overlayOptions.filter(({ key }) => overlays[key]).map((overlay) => (
+                  <span key={overlay.key}><i style={{ '--overlay-color': overlay.color }} />{overlay.label}</span>
+                ))}
+                <small>Solo codificación visual · no son campos medidos</small>
+              </div>
+              <div className="gravity-camera-hint"><Camera size={13} /> Arrastra para girar · desplázate para acercar · arrastra con el botón derecho para mover</div>
               <div className="gravity-selection-info" aria-live="polite">
                 <Info size={15} /><span><strong>{detail.label}:</strong> {detail.detail ?? detail.text}</span>
               </div>
@@ -1034,20 +1549,30 @@ export function MicrogravityLab() {
 
           {panelView === 'graphs' && (
             <ComparisonChart
+              scenario={scenario}
               data={chartData}
+              renderingData={renderingData}
               currentDiameter={currentDiameter}
               elapsedSeconds={elapsedSeconds}
               duration={duration}
+              gravityLevel={gravityLevel}
             />
           )}
 
-          {panelView === 'data' && <ComparisonDataTable parameters={parameters} elapsedSeconds={elapsedSeconds} />}
+          {panelView === 'data' && (
+            <ComparisonDataTable
+              scenario={scenario}
+              gravityLevel={gravityLevel}
+              parameters={parameters}
+              elapsedSeconds={elapsedSeconds}
+            />
+          )}
 
           <div className="gravity-variable-explorer">
             <div>
-              <span className="panel-kicker">SELECT A VARIABLE · CONTEXTUAL EXPLANATION</span>
+              <span className="panel-kicker">SELECCIONA UNA VARIABLE · EXPLICACIÓN CONTEXTUAL</span>
               <div className="gravity-variable-buttons">
-                {Object.entries(variableDetails).map(([key, variable]) => (
+                {variableOptions.map(([key, variable]) => (
                   <button
                     type="button"
                     key={key}
@@ -1063,42 +1588,43 @@ export function MicrogravityLab() {
                 ))}
               </div>
             </div>
-            <p><strong>{variableDetails[selectedVariable].label}:</strong> {variableDetails[selectedVariable].detail}</p>
+            <p><strong>{detail.label}:</strong> {detail.detail ?? detail.text}</p>
           </div>
         </div>
       </div>
 
       <div className="gravity-science-grid">
         <section className="experience-science-card">
-          <span className="panel-kicker">WHY DOES GRAVITY MATTER?</span>
-          <h3>Buoyancy, convection, diffusion</h3>
+          <span className="panel-kicker">CONTEXTO CIENTÍFICO</span>
+          <h3>Flotabilidad, convección y difusión</h3>
           <div className="gravity-physics-list">
-            <article><span>01</span><div><strong>Buoyancy</strong><p>Density differences in a gravitational field can drive motion around a flame. The Earth plume arrow is a directional cue, not a velocity field.</p></div></article>
-            <article><span>02</span><div><strong>Natural convection</strong><p>Buoyancy-driven transport changes shape and direction with gravity. In the idealized zero-g limit this mechanism vanishes, but other motion does not.</p></div></article>
-            <article><span>03</span><div><strong>Diffusion & imposed flow</strong><p>Species still diffuse in microgravity, and fans, spacecraft ventilation, disturbances, or residual accelerations can move gas. None is solved in this model.</p></div></article>
+            <article><span>01</span><div><strong>Flujo impulsado por flotabilidad</strong><p>Las diferencias de densidad en un campo gravitatorio pueden impulsar el movimiento alrededor de las llamas. La flecha ámbar y las partículas solo indican dirección; no representan un campo de velocidad resuelto.</p></div></article>
+            <article><span>02</span><div><strong>La gravedad modifica el balance de transporte</strong><p>Los cambios de gravedad pueden alterar el transporte por flotabilidad, pero el comportamiento real de la llama también depende del combustible, la geometría, el oxidante, el flujo impuesto y los límites. Esta visualización no predice cuantitativamente esos efectos.</p></div></article>
+            <article><span>03</span><div><strong>La difusión y la ventilación persisten</strong><p>La difusión de especies y el flujo impuesto pueden seguir moviendo el gas con baja gravedad. Los trazadores cian y la flecha de ventilación son trayectorias esquemáticas, no mediciones de concentración o flujo.</p></div></article>
           </div>
-          <div className="gravity-warning"><Info size={15} /><p>“Microgravity” is represented as an idealized g = 0 limit for comparison, not as a claim that the ISS has no residual acceleration or gas motion.</p></div>
+          <div className="gravity-warning"><Info size={15} /><p>El valor preestablecido de la EEI es una comparación idealizada de 0 g. No implica que la estación carezca de aceleración residual o movimiento del gas.</p></div>
         </section>
 
         <details className="experience-science-card" open>
-          <summary><span><Activity size={15} /> Model level, assumptions, and caveats</span><ArrowDown size={14} /></summary>
-          <p><strong>Classification:</strong> simplified mathematical model for droplet diameter; conceptual flame and transport scenes. No experimental validation is claimed.</p>
-          <p><strong>Equation:</strong> D²(t) = max(D₀² − Kt, 0). The display uses the same initial conditions and coefficient in both environments.</p>
-          <p><strong>Crucial caveat:</strong> the d² law shown has no gravity term. Identical curves are a consequence of that simplification, not a comparative scientific finding about real Earth or microgravity combustion.</p>
-          <p><strong>Outside scope:</strong> evaporation physics, heat/mass transfer coupling, combustion chemistry, buoyant or forced-flow solution, radiative loss, fuel-specific properties, chamber effects, and experimental uncertainty.</p>
+          <summary><span><Activity size={15} /> Nivel de evidencia y supuestos</span><ArrowDown size={14} /></summary>
+          <p><strong>Contexto de investigación establecido:</strong> NASA describe cómo la flotabilidad puede impulsar el flujo de una llama y complicar el análisis de la combustión terrestre. Las publicaciones vinculadas documentan experimentos; no validan esta visualización.</p>
+          <p><strong>Salida conceptual:</strong> la forma de la llama, el halo térmico, los trazadores de transporte y los marcadores de hollín son representaciones ilustrativas sin una solución de campos físicos ni datos experimentales asociados.</p>
+          <p><strong>Salida matemática simplificada:</strong> el modo de gota usa D²(t) = máx(D₀² − Kt, 0). Las curvas idénticas para distintas entradas de gravedad reflejan que la ecuación no incluye la gravedad; no son una comparación científica de velocidades reales de combustión.</p>
+          <p><strong>Fuera de alcance:</strong> física de evaporación, acoplamiento de transferencia de calor y masa, química de combustión, resolución del flujo, pérdidas radiativas, propiedades específicas del combustible, efectos de la cámara, incertidumbre y validación experimental.</p>
         </details>
       </div>
 
       <section className="experience-science-card gravity-references">
         <div className="experience-panel-heading">
-          <div><span className="panel-kicker">NASA PRIMARY SOURCES · NOT MODEL CALIBRATION DATA</span><h3>Research context</h3></div>
+          <div><span className="panel-kicker">FUENTES PRIMARIAS DE NASA · NO SON DATOS DE CALIBRACIÓN DEL MODELO</span><h3>Contexto de investigación</h3></div>
           <BookOpen size={17} />
         </div>
-        <a href="https://ntrs.nasa.gov/citations/20150023456" target="_blank" rel="noreferrer">NASA · Detailed Results from the FLEX Experiment <ExternalLink size={13} /></a>
-        <a href="https://ntrs.nasa.gov/citations/20210011385" target="_blank" rel="noreferrer">NASA · BASS-II Summary Report <ExternalLink size={13} /></a>
-        <a href="#research"><BookOpen size={13} /> Search the IGNIS indexed library</a>
-        <a href="#experiments-lab"><Flame size={13} /> Open the 3D combustion simulation lab</a>
-        <a href="#assistant"><Activity size={13} /> Ask IGNIS AI about the source evidence</a>
+        <a href="https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/" target="_blank" rel="noreferrer">NASA Glenn · título original: Combustion Science program (incluye ACME y BASS archivados) <ExternalLink size={13} /></a>
+        <a href="https://ntrs.nasa.gov/citations/20150023456" target="_blank" rel="noreferrer">Título original de NASA · Detailed Results from the FLEX Experiment <ExternalLink size={13} /></a>
+        <a href="https://ntrs.nasa.gov/citations/20210011385" target="_blank" rel="noreferrer">Título original de NASA · BASS-II Summary Report <ExternalLink size={13} /></a>
+        <a href="#research"><BookOpen size={13} /> Buscar en la biblioteca indexada de IGNIS</a>
+        <a href="#experiments-lab"><Flame size={13} /> Abrir el laboratorio 3D de simulación de combustión</a>
+        <a href="#assistant"><Activity size={13} /> Consultar a IGNIS IA sobre la evidencia de las fuentes</a>
       </section>
     </section>
   )

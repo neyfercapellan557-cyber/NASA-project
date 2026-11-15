@@ -93,7 +93,7 @@ export default function IgnisCompanion({ active, onActivate }) {
       <button
         type="button"
         className={`ignis-companion ${stateClass}`}
-        aria-label={active ? 'IGNIS is responding. Open the AI Assistant.' : 'Open the IGNIS AI Assistant'}
+        aria-label={active ? 'IGNIS está respondiendo. Abrir el asistente de IA.' : 'Abrir el asistente de IA IGNIS'}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerEnd}
